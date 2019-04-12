@@ -52,5 +52,3 @@ if [ -n "$PULP_SMASH_PR_NUMBER" ]; then
   popd
   pip install -e ./pulp-smash
 fi
-
-cd pulp-swagger-codegen

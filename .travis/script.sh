@@ -30,7 +30,9 @@ show_logs_and_return_non_zero() {
     return "${rc}"
 }
 
-sudo ./generate.sh python 3.0.0rc1
+sudo ./generate.sh pulpcore 3.0.0rc1 python
+
+sudo ./generate.sh pulp_file 0.1.0b4 ruby
 
 # Travis' scripts use unbound variables. This is problematic, because the
 # changes made to this script's environment appear to persist when Travis'
