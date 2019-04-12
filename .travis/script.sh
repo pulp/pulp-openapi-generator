@@ -19,6 +19,8 @@ sleep 8
 
 sudo ./generate.sh pulpcore 3.0.0rc1 python
 
+sudo ./generate.sh pulp_file 0.1.0b4 ruby
+
 # Travis' scripts use unbound variables. This is problematic, because the
 # changes made to this script's environment appear to persist when Travis'
 # scripts execute. Perhaps this script is sourced by Travis? Regardless of why,
