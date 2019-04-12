@@ -43,12 +43,4 @@ else
   cd ../pulpcore
 fi
 
-if [ -n "$PULP_SMASH_PR_NUMBER" ]; then
-  pip uninstall -y pulp-smash
-  git clone https://github.com/PulpQE/pulp-smash.git
-  pushd pulp-smash
-  git fetch origin +refs/pull/$PULP_SMASH_PR_NUMBER/merge
-  git checkout FETCH_HEAD
-  popd
-  pip install -e ./pulp-smash
-fi
+cd pulp-swagger-codegen

@@ -1,6 +1,3 @@
-#!/usr/bin/bash
-# Before executing do `export PULP3_HOST=host`
-
 if [ $# -eq 0 ]; then
     echo "No arguments provided"
     exit 1
