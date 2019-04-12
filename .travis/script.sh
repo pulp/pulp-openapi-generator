@@ -5,18 +5,12 @@ set -veuo pipefail
 # check the commit message
 # ./.travis/check_commit.sh
 
-# Lint code.
-# flake8 --config flake8.cfg || exit 1
-
 # Run migrations.
 export DJANGO_SETTINGS_MODULE=pulpcore.app.settings
 export PULP_CONTENT_HOST=localhost:24816
 export PULP3_HOST=localhost:24817
 pulp-manager makemigrations file --noinput
 pulp-manager migrate --noinput
-
-# Run unit tests.
-# (cd ../pulpcore && coverage run manage.py test pulp_certguard.tests.unit)
 
 # Run functional tests.
 export DJANGO_SETTINGS_MODULE=pulpcore.app.settings
