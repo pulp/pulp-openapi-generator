@@ -19,7 +19,12 @@ sleep 8
 
 sudo ./generate.sh pulpcore 3.0.0rc1 python
 
-sudo ./generate.sh pulp_file 0.1.0b4 ruby
+sudo ./generate.sh pulp_file 0.1.0b4 python
+
+pip install ./pulpcore-client
+pip install ./pulp_file-client
+
+python test_bindings.py
 
 # Travis' scripts use unbound variables. This is problematic, because the
 # changes made to this script's environment appear to persist when Travis'
