@@ -10,7 +10,7 @@ django-admin migrate --noinput
 
 # Run functional tests.
 export DJANGO_SETTINGS_MODULE=pulpcore.app.settings
-django-admin reset-admin-password --password admin
+django-admin reset-admin-password --password password
 django-admin runserver 24817 >> ~/django_runserver.log 2>&1 &
 gunicorn pulpcore.content:server --bind 'localhost:24816' --worker-class 'aiohttp.GunicornWebWorker' -w 2 >> ~/content_app.log 2>&1 &
 rq worker -n 'resource-manager@%h' -w 'pulpcore.tasking.worker.PulpWorker' >> ~/resource_manager.log 2>&1 &
