@@ -17,9 +17,9 @@ rq worker -n 'resource-manager@%h' -w 'pulpcore.tasking.worker.PulpWorker' >> ~/
 rq worker -n 'reserved-resource-worker_1@%h' -w 'pulpcore.tasking.worker.PulpWorker' >> ~/reserved_worker-1.log 2>&1 &
 sleep 8
 
-sudo ./generate.sh pulpcore 3.0.0rc1 python
+sudo ./generate.sh pulpcore python
 
-sudo ./generate.sh pulp_file 0.1.0b4 python
+sudo ./generate.sh pulp_file python
 
 pip install ./pulpcore-client
 pip install ./pulp_file-client
