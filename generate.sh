@@ -16,32 +16,29 @@ fi
 
 if [ $2 = 'python' ]
 then
-    docker run --rm -v ${PWD}:/local swaggerapi/swagger-codegen-cli generate \
+    docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
         -i /local/api.json \
-        -l python \
+        -g python \
         -o /local/$1-client \
         -DpackageName=pulpcore.client.$1 \
         -DprojectName=$1-client \
-        -DpackageVersion=${VERSION}
+        -DpackageVersion=${VERSION} \
+        --skip-validate-spec \
+        --strict-spec=false
     cp python/__init__.py $1-client/pulpcore/
     cp python/__init__.py $1-client/pulpcore/client
-    # There is a bug in swagger-codegen. When using package names within a namespace it creates the package
-    # accross 2 different directories. We move everything back into place here.
-    cp $1-client/pulpcore.client.$1/* $1-client/pulpcore/client/$1/
-    cp $1-client/pulpcore.client.$1/api/* $1-client/pulpcore/client/$1/api/
-    cp $1-client/pulpcore.client.$1/models/* $1-client/pulpcore/client/$1/models/
-    # Then remove the wrong directory
-    rm -rf $1-client/pulpcore.client.$1
 fi
 if [ $2 = 'ruby' ]
 then
-    docker run --rm -v ${PWD}:/local swaggerapi/swagger-codegen-cli generate \
+    docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
         -i /local/api.json \
-        -l ruby \
+        -g ruby \
         -o /local/$1-client \
         -DgemName=$1_client \
         -DgemLicense="GPLv2" \
-        -DgemVersion=${VERSION}
+        -DgemVersion=${VERSION} \
+        --skip-validate-spec \
+        --strict-spec=false
 fi
 
 rm api.json
