@@ -2,9 +2,10 @@ from pulpcore.client.pulpcore import (ApiClient as CoreApiClient, Artifact, Arti
                                       Configuration, Distribution, DistributionsApi, Repository,
                                       RepositoriesApi, TasksApi)
 from pulpcore.client.pulp_file import (ApiClient as FileApiClient, ContentApi as FileContentApi, FileContent,
-                                       FilePublisher, PublishersApi as FilePublishersApi,
+                                       FilePublisher, PublicationsApi as FilePublicationsApi,
+                                       PublishersApi as FilePublishersApi,
                                        RemotesApi as FileRemotesApi, FileRemote, RepositorySyncURL,
-                                       RepositoryPublishURL)
+                                       FilePublication)
 from pprint import pprint
 from time import sleep
 
@@ -49,6 +50,7 @@ artifacts = ArtifactsApi(core_client)
 distributions = DistributionsApi(core_client)
 repositories = RepositoriesApi(core_client)
 filecontent = FileContentApi(file_client)
+filepublications = FilePublicationsApi(file_client)
 filepublishers = FilePublishersApi(file_client)
 fileremotes = FileRemotesApi(file_client)
 tasks = TasksApi(core_client)
@@ -116,8 +118,8 @@ file_publisher = filepublishers.publishers_file_file_create(file_publisher_data)
 sleep(1)
 
 # Create a publication from the latest version of the repository
-publish_data = RepositoryPublishURL(repository=repository.href)
-publish_response = filepublishers.publishers_file_file_publish(file_publisher.href, publish_data)
+publish_data = FilePublication(repository=repository.href)
+publish_response = filepublications.publications_file_file_create(publish_data)
 
 sleep(1)
 
