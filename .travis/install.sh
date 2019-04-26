@@ -34,13 +34,12 @@ pip install -e ./pulpcore-plugin
 if [ -z "$PULP_FILE_PR_NUMBER" ]; then
   pip install git+https://github.com/pulp/pulp_file.git#egg=pulp_file
 else
-  cd ../
   git clone https://github.com/pulp/pulp_file.git
-  cd pulp_file
+  pushd pulp_file
   git fetch origin +refs/pull/$PULP_FILE_PR_NUMBER/merge
   git checkout FETCH_HEAD
   pip install -e .
-  cd ../pulpcore
+  popd
 fi
 
 cd pulp-swagger-codegen
