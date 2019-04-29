@@ -15,8 +15,10 @@ Requirements
 Generating bindings
 -------------------
 
-The ``generate.sh`` script takes two positional arguments: module name, language. The following
-commands should be used to generate Python bindings for ``pulpcore``:
+The ``generate.sh`` script takes three positional arguments: module name, language, and commit
+hash. When a commit hash is provided, it is appended to the version string. This denotes a
+pre-release build. The following commands should be used to generate Python bindings for
+``pulpcore``:
 
 .. code-block:: bash
 
@@ -33,3 +35,9 @@ Ruby bindings for the RPM plugin can be generated with the following command:
 This command will generate a Ruby Gem inside ``pulp_rpm-client`` directory.
 
 The packages generated will have the same version as what is reported by the status API.
+
+This command will generate a Ruby Gem with 'fe3n1a' appended to the version string.
+
+.. code-block:: bash
+
+    sudo ./generate.sh pulp_rpm ruby fe3n1a
