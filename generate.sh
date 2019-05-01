@@ -12,7 +12,7 @@ if [ $2 = 'python' ]
 then
     if [ ${3-x} ];
     then
-        export VERSION=$VERSION+1.$3
+        export VERSION=$VERSION.dev.1
     fi
     docker run --rm -v ${PWD}:/local swaggerapi/swagger-codegen-cli generate \
         -i /local/api.json \
