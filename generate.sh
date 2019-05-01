@@ -8,13 +8,12 @@ curl -o api.json http://localhost:24817/pulp/api/v3/docs/api.json?plugin=$1
 # Get the version of the pulpcore or plugin as reported by status API
 export VERSION=$(http :24817/pulp/api/v3/status/ | jq --arg plugin $1 -r '.versions[] | select(.component == $plugin) | .version')
 
-if [ ${3-x} ];
-then
-    export VERSION=$VERSION-$3
-fi
-
 if [ $2 = 'python' ]
 then
+    if [ ${3-x} ];
+    then
+        export VERSION=$VERSION+$3
+    fi
     docker run --rm -v ${PWD}:/local swaggerapi/swagger-codegen-cli generate \
         -i /local/api.json \
         -l python \
@@ -34,7 +33,10 @@ then
 fi
 if [ $2 = 'ruby' ]
 then
-    curl -o api.json http://localhost:24817/pulp/api/v3/docs/api.json?plugin=$1
+    if [ ${3-x} ];
+    then
+        export VERSION=$VERSION-$3
+    fi
     docker run --rm -v ${PWD}:/local swaggerapi/swagger-codegen-cli generate \
         -i /local/api.json \
         -l ruby \
