@@ -1,7 +1,8 @@
 from pulpcore.client.pulpcore import (ApiClient as CoreApiClient, Artifact, ArtifactsApi,
-                                      Configuration, Distribution, DistributionsApi, Repository,
+                                      Configuration, Repository,
                                       RepositoriesApi, TasksApi)
 from pulpcore.client.pulp_file import (ApiClient as FileApiClient, ContentApi as FileContentApi, FileContent,
+                                       DistributionsApi as FileDistributionsApi, FileDistribution,
                                        FilePublisher, PublicationsApi as FilePublicationsApi,
                                        PublishersApi as FilePublishersApi,
                                        RemotesApi as FileRemotesApi, FileRemote, RepositorySyncURL,
@@ -47,9 +48,9 @@ file_client = FileApiClient(configuration)
 
 # Create api clients for all resource types
 artifacts = ArtifactsApi(core_client)
-distributions = DistributionsApi(core_client)
 repositories = RepositoriesApi(core_client)
 filecontent = FileContentApi(file_client)
+filedistributions = FileDistributionsApi(core_client)
 filepublications = FilePublicationsApi(file_client)
 filepublishers = FilePublishersApi(file_client)
 fileremotes = FileRemotesApi(file_client)
@@ -129,7 +130,7 @@ publication_href = created_resources[0]
 
 sleep(1)
 
-distribution_data = Distribution(name='baz15', base_path='foo15', publication=publication_href)
-distribution = distributions.distributions_create(distribution_data)
+distribution_data = FileDistribution(name='baz15', base_path='foo15', publication=publication_href)
+distribution = filedistributions.distributions_file_file_create(distribution_data)
 pprint(distribution)
 
