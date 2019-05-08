@@ -42,4 +42,4 @@ else
   popd
 fi
 
-cd pulp-swagger-codegen
+cd pulp-openapi-generator
