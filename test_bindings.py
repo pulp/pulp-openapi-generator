@@ -3,8 +3,7 @@ from pulpcore.client.pulpcore import (ApiClient as CoreApiClient, Artifact, Arti
                                       RepositoriesApi, TasksApi)
 from pulpcore.client.pulp_file import (ApiClient as FileApiClient, ContentApi as FileContentApi, FileContent,
                                        DistributionsApi as FileDistributionsApi, FileDistribution,
-                                       FilePublisher, PublicationsApi as FilePublicationsApi,
-                                       PublishersApi as FilePublishersApi,
+                                       PublicationsApi as FilePublicationsApi,
                                        RemotesApi as FileRemotesApi, FileRemote, RepositorySyncURL,
                                        FilePublication)
 from pprint import pprint
@@ -52,7 +51,6 @@ repositories = RepositoriesApi(core_client)
 filecontent = FileContentApi(file_client)
 filedistributions = FileDistributionsApi(core_client)
 filepublications = FilePublicationsApi(file_client)
-filepublishers = FilePublishersApi(file_client)
 fileremotes = FileRemotesApi(file_client)
 tasks = TasksApi(core_client)
 
@@ -109,12 +107,6 @@ created_resources = monitor_task(repo_version_response.task)
 
 repository_version_2 = repositories.repositories_versions_read(created_resources[0])
 pprint(repository_version_2)
-
-sleep(1)
-
-# Create a FilePublisher
-file_publisher_data = FilePublisher(name='bar15')
-file_publisher = filepublishers.publishers_file_file_create(file_publisher_data)
 
 sleep(1)
 
