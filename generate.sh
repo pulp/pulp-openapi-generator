@@ -4,7 +4,7 @@ if [ $# -eq 0 ]; then
 fi
 
 # Download the schema
-curl -o api.json http://localhost:24817/pulp/api/v3/docs/api.json?plugin=$1
+curl -o api.json "http://localhost:24817/pulp/api/v3/docs/api.json?bindings&plugin=$1"
 # Get the version of the pulpcore or plugin as reported by status API
 
 if [ ${3-x} ];
