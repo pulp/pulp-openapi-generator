@@ -16,7 +16,7 @@ fi
 
 if [ $2 = 'python' ]
 then
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.0.2 generate \
         -i /local/api.json \
         -g python \
         -o /local/$1-client \
