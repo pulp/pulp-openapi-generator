@@ -18,13 +18,26 @@ rq worker -n 'reserved-resource-worker_1@%h' -w 'pulpcore.tasking.worker.PulpWor
 sleep 8
 
 sudo ./generate.sh pulpcore python
-
 sudo ./generate.sh pulp_file python
-
 pip install ./pulpcore-client
 pip install ./pulp_file-client
 
-python test_bindings.py
+python .travis/test_bindings.py
+
+sudo rm -rf ./pulpcore-client
+sudo rm -rf ./pulp_file-client
+
+./generate.sh pulpcore ruby
+cd pulpcore-client
+gem build pulpcore_client
+gem install --both ./pulpcore_client-0.gem
+cd ..
+./generate.sh pulp_file ruby
+cd pulp_file-client
+gem build pulp_file_client
+gem install --both ./pulp_file_client-0.gem
+cd ..
+ruby .travis/test_bindings.rb
 
 # Travis' scripts use unbound variables. This is problematic, because the
 # changes made to this script's environment appear to persist when Travis'
