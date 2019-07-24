@@ -18,7 +18,8 @@ if [ -n "$PULP_PR_NUMBER" ]; then
 fi
 
 pip install -e ./pulpcore[postgres]
-cp ./pulpcore/.travis/test_bindings.py $TRAVIS_BUILD_DIR/
+cp ./pulpcore/.travis/test_bindings.py $TRAVIS_BUILD_DIR/.travis/
+cp ./pulpcore/.travis/test_bindings.rb $TRAVIS_BUILD_DIR/.travis/
 
 git clone https://github.com/pulp/pulpcore-plugin.git
 

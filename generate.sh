@@ -30,13 +30,18 @@ then
 fi
 if [ $2 = 'ruby' ]
 then
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.0.0 generate \
-        -i /local/api.json \
+    if [ ! -f ./openapi-generator-cli.jar ]
+    then
+        curl -o openapi-generator-cli.jar https://repos.fedorapeople.org/pulp/pulp/openapi/openapi-generator-cli.jar
+    fi
+    java -jar openapi-generator-cli.jar generate \
+        -i api.json \
         -g ruby \
-        -o /local/$1-client \
+        -o $1-client \
         -DgemName=$1_client \
-        -DgemLicense="GPLv2" \
+        -DgemLicense="GPL-2.0" \
         -DgemVersion=${VERSION} \
+        -Dlibrary=faraday \
         --skip-validate-spec \
         --strict-spec=false
 fi
