@@ -16,13 +16,11 @@ fi
 
 if [ $2 = 'python' ]
 then
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.0.2 generate \
+    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
         -i /local/api.json \
         -g python \
         -o /local/$1-client \
-        -DpackageName=pulpcore.client.$1 \
-        -DprojectName=$1-client \
-        -DpackageVersion=${VERSION} \
+        --additional-properties=packageName=pulpcore.client.$1,projectName=$1-client,packageVersion=${VERSION} \
         --skip-validate-spec \
         --strict-spec=false
     cp python/__init__.py $1-client/pulpcore/
@@ -30,18 +28,12 @@ then
 fi
 if [ $2 = 'ruby' ]
 then
-    if [ ! -f ./openapi-generator-cli.jar ]
-    then
-        curl -o openapi-generator-cli.jar https://repos.fedorapeople.org/pulp/pulp/openapi/openapi-generator-cli.jar
-    fi
-    java -jar openapi-generator-cli.jar generate \
-        -i api.json \
+    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+        -i /local/api.json \
         -g ruby \
-        -o $1-client \
-        -DgemName=$1_client \
-        -DgemLicense="GPL-2.0" \
-        -DgemVersion=${VERSION} \
-        -Dlibrary=faraday \
+        -o /local/$1-client \
+        --additional-properties=gemName=$1_client,gemLicense="GPL-2.0",gemVersion=${VERSION} \
+        --library=faraday \
         --skip-validate-spec \
         --strict-spec=false
 fi
