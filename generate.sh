@@ -32,7 +32,7 @@ then
         -i /local/api.json \
         -g ruby \
         -o /local/$1-client \
-        --additional-properties=gemName=$1_client,gemLicense="GPL-2.0",gemVersion=${VERSION} \
+        --additional-properties=gemName=$1_client,gemLicense="GPL-2.0+",gemVersion=${VERSION} \
         --library=faraday \
         --skip-validate-spec \
         --strict-spec=false
