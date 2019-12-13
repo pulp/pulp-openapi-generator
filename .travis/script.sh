@@ -3,19 +3,19 @@ set -veuo pipefail
 
 # Run migrations.
 export DJANGO_SETTINGS_MODULE=pulpcore.app.settings
-export PULP_CONTENT_HOST=localhost:24816
+export PULP_CONTENT_ORIGIN=http://localhost:24816
 export PULP3_HOST=localhost:24817
 django-admin makemigrations file --noinput
 django-admin migrate --noinput
 
 # Run functional tests.
 export DJANGO_SETTINGS_MODULE=pulpcore.app.settings
-django-admin reset-admin-password --password admin
+django-admin reset-admin-password --password password
 django-admin runserver 24817 >> ~/django_runserver.log 2>&1 &
 gunicorn pulpcore.content:server --bind 'localhost:24816' --worker-class 'aiohttp.GunicornWebWorker' -w 2 >> ~/content_app.log 2>&1 &
-rq worker -n 'resource-manager@%h' -w 'pulpcore.tasking.worker.PulpWorker' >> ~/resource_manager.log 2>&1 &
+rq worker -n 'resource-manager' -w 'pulpcore.tasking.worker.PulpWorker' >> ~/resource_manager.log 2>&1 &
 rq worker -n 'reserved-resource-worker_1@%h' -w 'pulpcore.tasking.worker.PulpWorker' >> ~/reserved_worker-1.log 2>&1 &
-sleep 8
+sleep 12
 
 sudo ./generate.sh pulpcore python
 sudo ./generate.sh pulp_file python
