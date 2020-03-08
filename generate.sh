@@ -7,7 +7,7 @@ fi
 curl -o api.json "http://localhost:24817/pulp/api/v3/docs/api.json?bindings&plugin=$1"
 # Get the version of the pulpcore or plugin as reported by status API
 
-if [ ${3-x} ];
+if [ $# -gt 2 ];
 then
     export VERSION=$3
 else
