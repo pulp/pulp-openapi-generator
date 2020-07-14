@@ -21,6 +21,7 @@ then
         -g python \
         -o /local/$1-client \
         --additional-properties=packageName=pulpcore.client.$1,projectName=$1-client,packageVersion=${VERSION} \
+        -t /local/templates/python \
         --skip-validate-spec \
         --strict-spec=false
     cp python/__init__.py $1-client/pulpcore/
