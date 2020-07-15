@@ -16,11 +16,12 @@ fi
 
 if [ $2 = 'python' ]
 then
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.2.3 generate \
+    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
         -i /local/api.json \
         -g python \
         -o /local/$1-client \
         --additional-properties=packageName=pulpcore.client.$1,projectName=$1-client,packageVersion=${VERSION} \
+        -t /local/templates/python \
         --skip-validate-spec \
         --strict-spec=false
     cp python/__init__.py $1-client/pulpcore/
