@@ -29,11 +29,12 @@ then
 fi
 if [ $2 = 'ruby' ]
 then
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.2.3 generate \
+    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
         -i /local/api.json \
         -g ruby \
         -o /local/$1-client \
         --additional-properties=gemName=$1_client,gemLicense="GPL-2.0+",gemVersion=${VERSION} \
+        -t /local/templates/ruby \
         --library=faraday \
         --skip-validate-spec \
         --strict-spec=false
