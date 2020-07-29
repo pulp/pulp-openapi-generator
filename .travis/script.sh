@@ -21,6 +21,7 @@ sleep 12
 
 sudo ./generate.sh pulpcore python
 sudo ./generate.sh pulp_file python
+pip install requests
 pip install ./pulpcore-client
 pip install ./pulp_file-client
 
