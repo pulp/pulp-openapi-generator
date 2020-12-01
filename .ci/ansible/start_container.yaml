@@ -12,17 +12,11 @@
         mode: "0755"
       loop:
         - settings
-        - ~/.config/pulp_smash
 
     - name: "Generate Pulp Settings"
       template:
         src: settings.py.j2
         dest: settings/settings.py
-
-    - name: "Configure pulp-smash"
-      copy:
-        src: smash-config.json
-        dest: ~/.config/pulp_smash/settings.json
 
     - name: "Setup docker networking"
       docker_network:
@@ -57,16 +51,6 @@
       loop: "{{ pulp_ci_bridge_info.network.Containers | dict2items }}"
       become: true
 
-    - name: "Create Pulp Bucket"
-      amazon.aws.s3_bucket:
-        aws_access_key: "{{ minio_access_key }}"
-        aws_secret_key: "{{ minio_secret_key }}"
-        s3_url: "http://minio:9000"
-        region: eu-central-1
-        name: pulp3
-        state: present
-      when: s3_test | default(false)
-
     - block:
         - name: "Wait for Pulp"
           uri:
@@ -80,14 +64,6 @@
         - name: "Output pulp container log"
           command: "docker logs pulp"
           failed_when: true
-
-    - name: "Check version of component being tested"
-      assert:
-        that:
-          - (result.json.versions | items2dict(key_name="component", value_name="version"))[component_name] | canonical_semver == (component_version | canonical_semver)
-        fail_msg: |
-          Component {{ component_name }} was expected to be installed in version {{ component_version }}.
-          Instead it is reported as version {{ (result.json.versions | items2dict(key_name="component", value_name="version"))[component_name] }}.
 
     - name: "Set pulp password in .netrc"
       copy:
