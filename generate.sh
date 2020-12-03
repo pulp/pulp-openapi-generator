@@ -14,6 +14,7 @@ else
     export VERSION=$(http :24817/pulp/api/v3/status/ | jq --arg plugin $1 -r '.versions[] | select(.component == $plugin) | .version')
 fi
 
+echo ::group::BINDINGS
 if [ $2 = 'python' ]
 then
     docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
@@ -40,4 +41,5 @@ then
         --strict-spec=false
 fi
 
+echo ::endgroup::
 rm api.json
