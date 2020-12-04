@@ -24,32 +24,13 @@ jobs:
         with:
           python-version: "3.7"
 
-        # dev_requirements contains tools needed for flake8, etc.
-      - name: Install requirements
-        run: pip3 install -r dev_requirements.txt
-
       - name: Check commit message
         if: github.event_name == 'pull_request'
         env:
           GITHUB_CONTEXT: ${{ github.event.pull_request.commits_url }}
-        run: sh .github/workflows/scripts/check_commit.sh
-
-      # run black separately from flake8 to get a diff
-      - name: Run black
         run: |
-          black --version
-          black --check --diff .
-
-      # Lint code.
-      - name: Run flake8
-        run: flake8 --config flake8.cfg
-
-      # check for any files unintentionally left out of MANIFEST.in
-      - name: Check manifest
-        run: check-manifest
-
-      - name: Check for pulpcore imports outside of pulpcore.plugin
-        run: sh .ci/scripts/check_pulpcore_imports.sh
+          pip install requests
+          sh .github/workflows/scripts/check_commit.sh
 
   pulp:
     runs-on: ubuntu-latest
@@ -60,14 +41,6 @@ jobs:
       matrix:
         env:
           - TEST: pulp
-          - TEST: docs
-          - TEST: s3
-
-    services:
-      postgres:
-        image: postgres:9.6
-      redis:
-        image: redis
 
     steps:
       - uses: actions/checkout@v2
@@ -80,13 +53,17 @@ jobs:
         with:
           python-version: "3.7"
 
+      - uses: actions/setup-ruby@v1
+        with:
+            ruby-version: "2.6"
+
       - name: Install httpie
         run: |
           echo ::group::HTTPIE
           sudo apt-get update -yq
           sudo -E apt-get -yq --no-install-suggests --no-install-recommends install httpie
           echo ::endgroup::
-          echo "TEST=${{ matrix.env.TEST }}" >> $GITHUB_ENV
+          echo "HTTPIE_CONFIG_DIR=$GITHUB_WORKSPACE/.ci/assets/httpie/" >> $GITHUB_ENV
 
       - name: Before Install
         run: .github/workflows/scripts/before_install.sh
@@ -102,7 +79,6 @@ jobs:
       - name: Before Script
         run: |
           .github/workflows/scripts/before_script.sh
-          echo "HTTPIE_CONFIG_DIR=$GITHUB_WORKSPACE/.github" >> $GITHUB_ENV
 
       - name: Script
         run: .github/workflows/scripts/script.sh
