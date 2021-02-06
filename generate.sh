@@ -40,6 +40,15 @@ then
         --skip-validate-spec \
         --strict-spec=false
 fi
+if [ $2 = 'typescript' ]
+then
+    podman run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v5.0.0 generate \
+        -i /local/api.json \
+        -g typescript-axios \
+        -o /local/$1-client \
+        --skip-validate-spec \
+        --strict-spec=false
+fi
 
 echo ::endgroup::
 rm api.json
