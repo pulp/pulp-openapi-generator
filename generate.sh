@@ -17,7 +17,7 @@ fi
 echo ::group::BINDINGS
 if [ $2 = 'python' ]
 then
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
+    podman run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
         -i /local/api.json \
         -g python \
         -o /local/$1-client \
@@ -25,13 +25,14 @@ then
         -t /local/templates/python \
         --skip-validate-spec \
         --strict-spec=false
+    ls -al $1-client
     cp python/__init__.py $1-client/pulpcore/
     cp python/__init__.py $1-client/pulpcore/client
 fi
 if [ $2 = 'ruby' ]
 then
     python3 remove-cookie-auth.py
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.2.3 generate \
+    podman run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.2.3 generate \
         -i /local/api.json \
         -g ruby \
         -o /local/$1-client \
