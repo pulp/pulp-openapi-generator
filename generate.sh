@@ -17,7 +17,7 @@ fi
 echo ::group::BINDINGS
 if [ $2 = 'python' ]
 then
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
+    sudo podman run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
         -i /local/api.json \
         -g python \
         -o /local/$1-client \
@@ -31,7 +31,7 @@ fi
 if [ $2 = 'ruby' ]
 then
     python3 remove-cookie-auth.py
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.2.3 generate \
+    sudo podman run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.2.3 generate \
         -i /local/api.json \
         -g ruby \
         -o /local/$1-client \
@@ -42,7 +42,7 @@ then
 fi
 if [ $2 = 'typescript' ]
 then
-    podman run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v5.0.0 generate \
+    podman run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v5.0.1 generate \
         -i /local/api.json \
         -g typescript-axios \
         -o /local/$1-client \
