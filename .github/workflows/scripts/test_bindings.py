@@ -1,25 +1,31 @@
 from pulpcore.client.pulpcore import (
     ApiClient as CoreApiClient,
-    ArtifactsApi,
     Configuration,
+)
+from pulpcore.client.pulpcore.apis import (
+    ArtifactsApi,
     TasksApi,
-    Upload,
-    UploadCommit,
     UploadsApi,
 )
-from pulpcore.client.pulp_file import (
-    ApiClient as FileApiClient,
+from pulpcore.client.pulpcore.models import (
+    Upload,
+    UploadCommit,
+)
+from pulpcore.client.pulp_file import ApiClient as FileApiClient
+from pulpcore.client.pulp_file.apis import (
     ContentFilesApi,
     DistributionsFileApi,
-    FileFileDistribution,
     PublicationsFileApi,
     RemotesFileApi,
+    RepositoriesFileApi,
+    RepositoriesFileVersionsApi,
+)
+from pulpcore.client.pulp_file.models import (
+    FileFileDistribution,
     FileFileRemote,
     RepositorySyncURL,
     FileFilePublication,
     FileFileRepository,
-    RepositoriesFileApi,
-    RepositoriesFileVersionsApi,
 )
 from pprint import pprint
 from time import sleep
@@ -85,7 +91,7 @@ def upload_file_in_chunks(file_path):
             with NamedTemporaryFile() as file_chunk:
                 file_chunk.write(chunk)
                 upload = uploads.update(
-                    upload_href=upload.pulp_href, file=file_chunk.name, content_range=content_range
+                    upload_href=upload.pulp_href, file=open(file_chunk.name, "rb"), content_range=content_range
                 )
             offset += chunk_size
             sha256hasher.update(chunk)
