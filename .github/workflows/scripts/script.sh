@@ -16,6 +16,8 @@ set -mveuo pipefail
 export DJANGO_SETTINGS_MODULE=pulpcore.app.settings
 export PULP_SETTINGS=$GITHUB_WORKSPACE/.ci/ansible/settings/settings.py
 
+export PULP_URL="http://pulp"
+
 cd $GITHUB_WORKSPACE
 
 ./generate.sh pulpcore python

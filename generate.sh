@@ -3,8 +3,10 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
+PULP_URL="${PULP_URL:-http://localhost:24817}"
+
 # Download the schema
-curl -o api.json "http://localhost:24817/pulp/api/v3/docs/api.json?bindings&plugin=$1"
+curl -k -o api.json "$PULP_URL/pulp/api/v3/docs/api.json?bindings&plugin=$1"
 # Get the version of the pulpcore or plugin as reported by status API
 
 if [ $# -gt 2 ];
