@@ -13,7 +13,7 @@ if [ $# -gt 2 ];
 then
     export VERSION=$3
 else
-    export VERSION=$(http :24817/pulp/api/v3/status/ | jq --arg plugin $1 -r '.versions[] | select(.component == $plugin) | .version')
+    export VERSION=$(http $PULP_URL/pulp/api/v3/status/ | jq --arg plugin $1 -r '.versions[] | select(.component == $plugin) | .version')
 fi
 
 echo ::group::BINDINGS
