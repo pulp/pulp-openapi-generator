@@ -61,7 +61,7 @@ issues = pattern.findall(message)
 if issues:
     for issue in pattern.findall(message):
         __check_status(issue)
-        __check_changelog(issue)
+        # __check_changelog(issue)
 else:
     if NO_ISSUE in message:
         print("Commit {sha} has no issues but is tagged {tag}.".format(sha=sha[0:7], tag=NO_ISSUE))
