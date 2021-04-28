@@ -9,10 +9,6 @@
 
 set -mveuo pipefail
 
-cd $GITHUB_WORKSPACE
-sed -i -e 's/localhost:24817/pulp/g' generate.sh
-sed -i -e 's/:24817/pulp/g' generate.sh
-
 # Intall requirements for ansible playbooks
 pip install docker netaddr boto3 ansible
 
