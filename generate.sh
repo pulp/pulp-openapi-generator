@@ -33,7 +33,7 @@ fi
 if [ $2 = 'ruby' ]
 then
     python3 remove-cookie-auth.py
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.2.3 generate \
+    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
         -i /local/api.json \
         -g ruby \
         -o /local/$1-client \
