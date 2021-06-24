@@ -39,6 +39,7 @@ then
         -o /local/$1-client \
         --additional-properties=gemName=$1_client,gemLicense="GPL-2.0+",gemVersion=${VERSION} \
         --library=faraday \
+        -t /local/templates/ruby \
         --skip-validate-spec \
         --strict-spec=false
 fi
