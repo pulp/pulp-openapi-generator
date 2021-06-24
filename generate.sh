@@ -3,6 +3,13 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
+if command -v docker > /dev/null
+then
+  container_exec=docker
+else
+  container_exec=podman
+fi
+
 PULP_URL="${PULP_URL:-http://localhost:24817}"
 
 # Download the schema
@@ -19,7 +26,7 @@ fi
 echo ::group::BINDINGS
 if [ $2 = 'python' ]
 then
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
+    $container_exec run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
         -i /local/api.json \
         -g python \
         -o /local/$1-client \
@@ -33,7 +40,7 @@ fi
 if [ $2 = 'ruby' ]
 then
     python3 remove-cookie-auth.py
-    docker run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
+    $container_exec run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v4.3.1 generate \
         -i /local/api.json \
         -g ruby \
         -o /local/$1-client \
@@ -45,7 +52,7 @@ then
 fi
 if [ $2 = 'typescript' ]
 then
-    podman run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v5.0.0 generate \
+    $container_exec run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v5.0.0 generate \
         -i /local/api.json \
         -g typescript-axios \
         -o /local/$1-client \
