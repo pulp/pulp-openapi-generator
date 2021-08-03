@@ -20,7 +20,15 @@ if [ $# -gt 2 ];
 then
     export VERSION=$3
 else
-    export VERSION=$(http $PULP_URL/pulp/api/v3/status/ | jq --arg plugin $1 -r '.versions[] | select(.component == $plugin) | .version')
+    # match the component name by removing the "pulp/pulp_" prefix
+    if [ $1 = 'pulpcore' ]
+    then
+        COMPONENT_NAME="core"
+    else
+        COMPONENT_NAME=${1#"pulp_"}
+    fi
+
+    export VERSION=$(http $PULP_URL/pulp/api/v3/status/ | jq --arg plugin $COMPONENT_NAME -r '.versions[] | select(.component == $plugin) | .version')
 fi
 
 echo ::group::BINDINGS
