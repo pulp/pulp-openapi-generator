@@ -32,7 +32,7 @@ Ruby bindings for the RPM plugin can be generated with the following command:
 
     sudo ./generate.sh pulp_rpm ruby
 
-This command will generate a Ruby Gem inside ``pulp_rpm-client`` directory.
+This command will generate a Ruby Gem inside the ``pulp_rpm-client`` directory.
 
 The packages generated will have the same version as what is reported by the status API.
 
