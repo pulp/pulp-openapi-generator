@@ -60,10 +60,11 @@ then
 fi
 if [ $2 = 'typescript' ]
 then
-    $container_exec run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v5.0.0 generate \
+    $container_exec run -u $(id -u) --rm -v ${PWD}:/local openapitools/openapi-generator-cli:v5.2.1 generate \
         -i /local/api.json \
         -g typescript-axios \
         -o /local/$1-client \
+	      -t /local/templates/typescript-axios \
         --skip-validate-spec \
         --strict-spec=false
 fi
