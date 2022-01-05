@@ -60,7 +60,7 @@ fi
 if [ $2 = 'ruby' ]
 then
     python3 remove-cookie-auth.py
-    $container_exec run -u $(id -u) --rm -v ${PWD}:$volume_name openapitools/openapi-generator-cli:v4.3.1 generate \
+    $container_exec run -u $(id -u) --rm -v ${PWD}:$volume_name openapitools/openapi-generator-cli:v5.3.0 generate \
         -i /local/api.json \
         -g ruby \
         -o /local/$1-client \
