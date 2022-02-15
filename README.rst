@@ -41,3 +41,11 @@ This command will generate a Ruby Gem with '3.0.0rc1.dev.10' version.
 .. code-block:: bash
 
     sudo ./generate.sh pulp_rpm ruby 3.0.0rc1.dev.10
+
+Generating Bindings Against Re-Rooted Systems
+---------------------------------------------
+
+During bindings generation the openapi schema is fetched. Use the ``PULP_API_ROOT`` environment
+variable to instruct the bindings generator where the root of the API is located. For example, the
+default ``export PULP_API_ROOT="/pulp/"`` is the default root, which then serves the api.json at
+``/pulp/api/v3/docs/api.json``.

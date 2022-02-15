@@ -24,8 +24,12 @@ fi
 
 PULP_URL="${PULP_URL:-http://localhost:24817}"
 
+PULP_API_ROOT="${PULP_API_ROOT:-/pulp/}"
+
+PULP_URL="${PULP_URL}${PULP_API_ROOT}api/v3/"
+
 # Download the schema
-curl -k -o api.json "$PULP_URL/pulp/api/v3/docs/api.json?bindings&plugin=$1"
+curl -k -o api.json "${PULP_URL}docs/api.json?bindings&plugin=$1"
 # Get the version of the pulpcore or plugin as reported by status API
 
 if [ $# -gt 2 ];
@@ -40,7 +44,7 @@ else
         COMPONENT_NAME=${1#"pulp_"}
     fi
 
-    export VERSION=$(http $PULP_URL/pulp/api/v3/status/ | jq --arg plugin $COMPONENT_NAME -r '.versions[] | select(.component == $plugin) | .version')
+    export VERSION=$(http ${PULP_URL}status/ | jq --arg plugin $COMPONENT_NAME -r '.versions[] | select(.component == $plugin) | .version')
 fi
 
 echo ::group::BINDINGS
