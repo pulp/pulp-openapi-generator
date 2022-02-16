@@ -45,7 +45,7 @@ This command will generate a Ruby Gem with '3.0.0rc1.dev.10' version.
 Generating Bindings Against Re-Rooted Systems
 ---------------------------------------------
 
-During bindings generation the openapi schema is fetched. Use the ``PULP_API_ROOT`` environment
-variable to instruct the bindings generator where the root of the API is located. For example, the
-default ``export PULP_API_ROOT="/pulp/"`` is the default root, which then serves the api.json at
-``/pulp/api/v3/docs/api.json``.
+During bindings generation the openapi schema is fetched. Use the ``PULP_V3_API_ROOT`` environment
+variable to instruct the bindings generator where the root of the V3 API is located. For example,
+the default ``export PULP_V3_API_ROOT="/pulp/api/v3/"`` is the default root, which then serves the
+api.json at ``/pulp/api/v3/docs/api.json``.

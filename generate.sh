@@ -24,9 +24,9 @@ fi
 
 PULP_URL="${PULP_URL:-http://localhost:24817}"
 
-PULP_API_ROOT="${PULP_API_ROOT:-/pulp/}"
+PULP_V3_API_ROOT="${PULP_V3_API_ROOT:-/pulp/api/v3/}"
 
-PULP_URL="${PULP_URL}${PULP_API_ROOT}api/v3/"
+PULP_URL="${PULP_URL}${PULP_V3_API_ROOT}"
 
 # Download the schema
 curl -k -o api.json "${PULP_URL}docs/api.json?bindings&plugin=$1"
