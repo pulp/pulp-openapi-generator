@@ -31,7 +31,8 @@ PULP_URL="${PULP_URL}${PULP_API_ROOT}api/v3/"
 # Download the schema
 curl -k -o api.json "${PULP_URL}docs/api.json?bindings&plugin=$1"
 # Get the version of the pulpcore or plugin as reported by status API
-
+echo "${PULP_URL}docs/api.json?bindings&plugin=$1"
+cat api.json
 if [ $# -gt 2 ];
 then
     export VERSION=$3
