@@ -50,7 +50,12 @@ fi
 echo ::group::BINDINGS
 if [ $2 = 'python' ]
 then
-    $container_exec run -u $(id -u) --rm -v ${PWD}:$volume_name docker.io/openapitools/openapi-generator-cli:v4.3.1 generate \
+    $container_exec run \
+        --ulimit nofile=122880:122880 \
+        -u $(id -u) \
+        --rm \
+        -v ${PWD}:$volume_name \
+        docker.io/openapitools/openapi-generator-cli:v4.3.1 generate \
         -i /local/api.json \
         -g python \
         -o /local/$1-client \
