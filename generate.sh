@@ -68,6 +68,10 @@ then
 fi
 if [ $2 = 'ruby' ]
 then
+    # https://github.com/OpenAPITools/openapi-generator/wiki/FAQ#how-to-skip-certain-files-during-code-generation
+    mkdir -p $1-client
+    echo git_push.sh > $1-client/.openapi-generator-ignore
+
     python3 remove-cookie-auth.py
     $container_exec run -u $(id -u) --rm -v ${PWD}:$volume_name docker.io/openapitools/openapi-generator-cli:v4.3.1 generate \
         -i /local/api.json \
