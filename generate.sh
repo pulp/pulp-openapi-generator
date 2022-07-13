@@ -73,7 +73,7 @@ then
         -i /local/api.json \
         -g ruby \
         -o /local/$1-client \
-        --additional-properties=gemName=$1_client,gemLicense="GPL-2.0+",gemVersion=${VERSION} \
+        --additional-properties=gemName=$1_client,gemLicense="GPL-2.0+",gemVersion=${VERSION},gemHomepage=https://github.com/pulp/$1 \
         --library=faraday \
         -t /local/templates/ruby \
         --skip-validate-spec \
