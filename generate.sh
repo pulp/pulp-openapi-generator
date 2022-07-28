@@ -6,8 +6,15 @@ fi
 if command -v docker > /dev/null
 then
   container_exec=docker
+  USER_COMMAND="-u $(id -u)"
 else
   container_exec=podman
+  if [[ -n $PULP_MCS_LABEL ]]
+  then
+    USER_COMMAND="--userns=keep-id --security-opt label=level:$PULP_MCS_LABEL"
+  else
+    USER_COMMAND="--userns=keep-id"
+  fi
 fi
 
 if command -v getenforce > /dev/null
@@ -52,7 +59,7 @@ if [ $2 = 'python' ]
 then
     $container_exec run \
         --ulimit nofile=122880:122880 \
-        -u $(id -u) \
+        $USER_COMMAND \
         --rm \
         -v ${PWD}:$volume_name \
         docker.io/openapitools/openapi-generator-cli:v4.3.1 generate \

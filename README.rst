@@ -49,3 +49,12 @@ During bindings generation the openapi schema is fetched. Use the ``PULP_API_ROO
 variable to instruct the bindings generator where the root of the API is located. For example, the
 default ``export PULP_API_ROOT="/pulp/"`` is the default root, which then serves the api.json at
 ``/pulp/api/v3/docs/api.json``.
+
+Generating Bindings on a Filesystem Shared With Another Container
+-----------------------------------------------------------------
+
+When the bindings are being generated so that they can be installed inside another container, it
+may be necessary to set the MCS label on the openapi-generator-cli container to match the MCS label
+of the other container. Users can set the $PULP_MCS_LABEL environment variable (e.g. s0:c1,c2).
+When this variable is present, the container for `openapi-generator-cli` will be started with this
+MCS label. This only applies to systems that are using `podman` and SELinux is `Enforcing`.
