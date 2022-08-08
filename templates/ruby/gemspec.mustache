@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = "{{{gemRequiredRubyVersion}}}{{^gemRequiredRubyVersion}}>= 1.9{{/gemRequiredRubyVersion}}"
 
   {{#isFaraday}}
-  s.add_runtime_dependency 'faraday', '>= 0.17', '< 1.9.0'
+  s.add_runtime_dependency 'faraday', '>= 0.17', '< 1.9'
   {{/isFaraday}}
   {{^isFaraday}}
   s.add_runtime_dependency 'typhoeus', '~> 1.0', '>= 1.0.1'
