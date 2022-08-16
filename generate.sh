@@ -5,18 +5,20 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-if command -v docker > /dev/null
+if command -v podman > /dev/null
 then
-  container_exec=docker
-  USER_COMMAND="-u $(id -u)"
-else
   container_exec=podman
+  ULIMIT_COMMAND=
   if [[ -n $PULP_MCS_LABEL ]]
   then
     USER_COMMAND="--userns=keep-id --security-opt label=level:$PULP_MCS_LABEL"
   else
     USER_COMMAND="--userns=keep-id"
   fi
+else
+  container_exec=docker
+  USER_COMMAND="-u $(id -u)"
+  ULIMIT_COMMAND="--ulimit nofile=122880:122880"
 fi
 
 if command -v getenforce > /dev/null
@@ -60,7 +62,7 @@ echo ::group::BINDINGS
 if [ $2 = 'python' ]
 then
     $container_exec run \
-        --ulimit nofile=122880:122880 \
+        $ULIMIT_COMMAND \
         $USER_COMMAND \
         --rm \
         -v ${PWD}:$volume_name \
@@ -82,7 +84,11 @@ then
     echo git_push.sh > $1-client/.openapi-generator-ignore
 
     python3 remove-cookie-auth.py
-    $container_exec run -u $(id -u) --rm -v ${PWD}:$volume_name docker.io/openapitools/openapi-generator-cli:v4.3.1 generate \
+    $container_exec run \
+        $ULIMIT_COMMAND \
+        $USER_COMMAND \
+        --rm -v ${PWD}:$volume_name \
+        docker.io/openapitools/openapi-generator-cli:v4.3.1 generate \
         -i /local/api.json \
         -g ruby \
         -o /local/$1-client \
@@ -94,7 +100,11 @@ then
 fi
 if [ $2 = 'typescript' ]
 then
-    $container_exec run -u $(id -u) --rm -v ${PWD}:$volume_name docker.io/openapitools/openapi-generator-cli:v5.2.1 generate \
+    $container_exec run \
+        $ULIMIT_COMMAND \
+        $USER_COMMAND \
+        --rm -v ${PWD}:$volume_name \
+        docker.io/openapitools/openapi-generator-cli:v5.2.1 generate \
         -i /local/api.json \
         -g typescript-axios \
         -o /local/$1-client \
