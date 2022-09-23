@@ -17,7 +17,12 @@ then
   fi
 else
   container_exec=docker
-  USER_COMMAND="-u $(id -u)"
+  if [[ -n $PULP_MCS_LABEL ]]
+  then
+    USER_COMMAND="-u $(id -u) --security-opt label=level:$PULP_MCS_LABEL"
+  else
+    USER_COMMAND="-u $(id -u)"
+  fi
   ULIMIT_COMMAND="--ulimit nofile=122880:122880"
 fi
 
