@@ -47,6 +47,7 @@ PULP_URL="${PULP_URL}${PULP_API_ROOT}api/v3/"
 # Download the schema
 curl -k -o api.json "${PULP_URL}docs/api.json?bindings&plugin=$1"
 # Get the version of the pulpcore or plugin as reported by status API
+export DOMAIN_ENABLED=$(jq -r '.info | ."x-pulp-domain-enabled" // false' < api.json)
 
 if [ $# -gt 2 ];
 then
@@ -75,7 +76,7 @@ then
         -i /local/api.json \
         -g python \
         -o /local/$1-client \
-        --additional-properties=packageName=pulpcore.client.$1,projectName=$1-client,packageVersion=${VERSION} \
+        --additional-properties=packageName=pulpcore.client.$1,projectName=$1-client,packageVersion=${VERSION},domainEnabled=${DOMAIN_ENABLED} \
         -t /local/templates/python \
         --skip-validate-spec \
         --strict-spec=false
