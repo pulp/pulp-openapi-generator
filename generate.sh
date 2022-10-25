@@ -5,7 +5,28 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-if command -v podman > /dev/null
+
+get_container_engine () {
+
+    # allow override from callers such as oci-env
+    if [ -z ${COMPOSE_BINARY} ]; then
+        echo "${COMPOSE_BINARY}"
+        return
+    fi
+
+    # use podman if found
+    if command -v podman > /dev/null; then
+        echo "podman"
+        return
+    fi
+
+    # default to docker
+    echo "docker"
+}
+
+
+container_engine=$(get_container_engine)
+if [[ "${container_engine}" == "podman" ]]
 then
   container_exec=podman
   ULIMIT_COMMAND=
