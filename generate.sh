@@ -9,19 +9,18 @@ fi
 get_container_engine () {
 
     # allow override from callers such as oci-env
-    if [[ -z ${COMPOSE_BINARY} ]]; then
+    if [[ -n ${COMPOSE_BINARY} ]]; then
         echo "${COMPOSE_BINARY}"
-        return
-    fi
 
     # use podman if found
-    if command -v podman > /dev/null; then
+    elif command -v podman > /dev/null; then
+        # use podman if found
         echo "podman"
-        return
-    fi
 
     # default to docker
-    echo "docker"
+    else
+        echo "docker"
+    fi
 }
 
 
