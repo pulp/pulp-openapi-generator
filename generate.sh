@@ -14,7 +14,6 @@ get_container_engine () {
 
     # use podman if found
     elif command -v podman > /dev/null; then
-        # use podman if found
         echo "podman"
 
     # default to docker
