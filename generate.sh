@@ -9,7 +9,7 @@ fi
 get_container_engine () {
 
     # allow override from callers such as oci-env
-    if [ -z ${COMPOSE_BINARY} ]; then
+    if [[ -z ${COMPOSE_BINARY} ]]; then
         echo "${COMPOSE_BINARY}"
         return
     fi
