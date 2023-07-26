@@ -50,6 +50,15 @@ variable to instruct the bindings generator where the root of the API is located
 default ``export PULP_API_ROOT="/pulp/"`` is the default root, which then serves the api.json at
 ``/pulp/api/v3/docs/api.json``.
 
+Generating Bindings Against Remote Systems
+------------------------------------------
+
+During bindings generation the openapi schema is fetched. Use the ``PULP_API`` environment
+variable to instruct the bindings generator to use a Pulp API on a different host and/or port.
+For example, ``export PULP_API="http://localhost:24817"`` are the default host and port, which
+results in the bindings generator talking to the Pulp API at
+``http://localhost:24817/pulp/api/v3/docs/api.json``.
+
 Generating Bindings on a Filesystem Shared With Another Container
 -----------------------------------------------------------------
 
