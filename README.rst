@@ -66,6 +66,15 @@ If you want to use a locally present openapi schema, you can skip fetching the o
 by setting the ``USE_LOCAL_API_JSON`` environment variable. Doing so you have to manually provide the
 ``api.json`` file containing the openapi schema in the current working directory.
 
+Generate Bindings Using Docker in Docker (dind)
+-----------------------------------------------
+
+Bindings are generated using the openapi-generator-cli docker container. If your environment itself runs in
+a docker container, the openapi-generator-cli container has to be started as a sibling container. For
+sibling containers, volumes cannot be mounted as usual. They have to be passed through from the parent
+container. For this to work you have to set the ``PARENT_CONRAINER_ID`` environment variable to specify the
+parent container in a dind environment.
+
 Generating Bindings on a Filesystem Shared With Another Container
 -----------------------------------------------------------------
 
