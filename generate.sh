@@ -38,15 +38,20 @@ else
   volume_name="/local"
 fi
 
-PULP_URL="${PULP_URL:-http://localhost:24817}"
+# Skip downloading the api.json if `USE_LOCAL_API_JSON` is set.
+if [[ -z $USE_LOCAL_API_JSON ]]
+then
+  PULP_URL="${PULP_URL:-http://localhost:24817}"
 
-PULP_API_ROOT="${PULP_API_ROOT:-/pulp/}"
+  PULP_API_ROOT="${PULP_API_ROOT:-/pulp/}"
 
-PULP_URL="${PULP_URL}${PULP_API_ROOT}api/v3/"
+  PULP_URL="${PULP_URL}${PULP_API_ROOT}api/v3/"
 
-# Download the schema
-curl -k -o api.json "${PULP_URL}docs/api.json?bindings&plugin=$1"
-# Get the version of the pulpcore or plugin as reported by status API
+  # Download the schema
+  curl -k -o api.json "${PULP_URL}docs/api.json?bindings&plugin=$1"
+  # Get the version of the pulpcore or plugin as reported by status API
+fi
+
 export DOMAIN_ENABLED=$(jq -r '.info | ."x-pulp-domain-enabled" // false' < api.json)
 
 if [ $# -gt 2 ];

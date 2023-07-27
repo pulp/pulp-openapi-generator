@@ -59,6 +59,13 @@ For example, ``export PULP_API="http://localhost:24817"`` are the default host a
 results in the bindings generator talking to the Pulp API at
 ``http://localhost:24817/pulp/api/v3/docs/api.json``.
 
+Generating Bindings Using a Local Openapi Schema
+-----------------------------------------------
+
+If you want to use a locally present openapi schema, you can skip fetching the openapi schema
+by setting the ``USE_LOCAL_API_JSON`` environment variable. Doing so you have to manually provide the
+``api.json`` file containing the openapi schema in the current working directory.
+
 Generating Bindings on a Filesystem Shared With Another Container
 -----------------------------------------------------------------
 
