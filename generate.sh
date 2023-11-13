@@ -80,6 +80,10 @@ else
   VOLUME_DIR="${PWD}"
 fi
 
+OPENAPI_PYTHON_IMAGE="${OPENAPI_PYTHON_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
+OPENAPI_RUBY_IMAGE="${OPENAPI_RUBY_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
+OPENAPI_TYPESCRIPT_IMAGE="${OPENAPI_TYPESCRIPT_IMAGE:-docker.io/openapitools/openapi-generator-cli:v5.2.1}"
+
 echo ::group::BINDINGS
 if [ $2 = 'python' ]
 then
@@ -88,7 +92,7 @@ then
         $USER_COMMAND \
         --rm \
         ${VOLUME_OPTION} \
-        docker.io/openapitools/openapi-generator-cli:v4.3.1 generate \
+        $OPENAPI_PYTHON_IMAGE generate \
         -i ${VOLUME_DIR}/api.json \
         -g python \
         -o ${VOLUME_DIR}/$1-client \
@@ -110,7 +114,7 @@ then
         $ULIMIT_COMMAND \
         $USER_COMMAND \
         --rm ${VOLUME_OPTION} \
-        docker.io/openapitools/openapi-generator-cli:v4.3.1 generate \
+        $OPENAPI_RUBY_IMAGE generate \
         -i ${VOLUME_DIR}/api.json \
         -g ruby \
         -o ${VOLUME_DIR}/$1-client \
@@ -126,7 +130,7 @@ then
         $ULIMIT_COMMAND \
         $USER_COMMAND \
         --rm ${VOLUME_OPTION} \
-        docker.io/openapitools/openapi-generator-cli:v5.2.1 generate \
+        $OPENAPI_TYPESCRIPT_IMAGE generate \
         -i ${VOLUME_DIR}/api.json \
         -g typescript-axios \
         -o ${VOLUME_DIR}/$1-client \
