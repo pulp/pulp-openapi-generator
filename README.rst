@@ -50,6 +50,31 @@ variable to instruct the bindings generator where the root of the API is located
 default ``export PULP_API_ROOT="/pulp/"`` is the default root, which then serves the api.json at
 ``/pulp/api/v3/docs/api.json``.
 
+Generating Bindings Against Remote Systems
+------------------------------------------
+
+During bindings generation the openapi schema is fetched. Use the ``PULP_API`` environment
+variable to instruct the bindings generator to use a Pulp API on a different host and/or port.
+For example, ``export PULP_API="http://localhost:24817"`` are the default host and port, which
+results in the bindings generator talking to the Pulp API at
+``http://localhost:24817/pulp/api/v3/docs/api.json``.
+
+Generating Bindings Using a Local Openapi Schema
+-----------------------------------------------
+
+If you want to use a locally present openapi schema, you can skip fetching the openapi schema
+by setting the ``USE_LOCAL_API_JSON`` environment variable. Doing so you have to manually provide the
+``api.json`` file containing the openapi schema in the current working directory.
+
+Generate Bindings Using Docker in Docker (dind)
+-----------------------------------------------
+
+Bindings are generated using the openapi-generator-cli docker container. If your environment itself runs in
+a docker container, the openapi-generator-cli container has to be started as a sibling container. For
+sibling containers, volumes cannot be mounted as usual. They have to be passed through from the parent
+container. For this to work you have to set the ``PARENT_CONRAINER_ID`` environment variable to specify the
+parent container in a dind environment.
+
 Generating Bindings on a Filesystem Shared With Another Container
 -----------------------------------------------------------------
 

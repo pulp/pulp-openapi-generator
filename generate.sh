@@ -38,15 +38,20 @@ else
   volume_name="/local"
 fi
 
-PULP_URL="${PULP_URL:-http://localhost:24817}"
+# Skip downloading the api.json if `USE_LOCAL_API_JSON` is set.
+if [[ -z $USE_LOCAL_API_JSON ]]
+then
+  PULP_URL="${PULP_URL:-http://localhost:24817}"
 
-PULP_API_ROOT="${PULP_API_ROOT:-/pulp/}"
+  PULP_API_ROOT="${PULP_API_ROOT:-/pulp/}"
 
-PULP_URL="${PULP_URL}${PULP_API_ROOT}api/v3/"
+  PULP_URL="${PULP_URL}${PULP_API_ROOT}api/v3/"
 
-# Download the schema
-curl -k -o api.json "${PULP_URL}docs/api.json?bindings&plugin=$1"
-# Get the version of the pulpcore or plugin as reported by status API
+  # Download the schema
+  curl -k -o api.json "${PULP_URL}docs/api.json?bindings&plugin=$1"
+  # Get the version of the pulpcore or plugin as reported by status API
+fi
+
 export DOMAIN_ENABLED=$(jq -r '.info | ."x-pulp-domain-enabled" // false' < api.json)
 
 if [ $# -gt 2 ];
@@ -64,6 +69,17 @@ else
     export VERSION=$(http ${PULP_URL}status/ | jq --arg plugin $COMPONENT_NAME -r '.versions[] | select(.component == $plugin) | .version')
 fi
 
+# Mount volumes from parent container with `--volumes-from` option if the
+# `PARENT_CONTAINER_ID` is set.
+if [ -z $PARENT_CONTAINER_ID ]
+then
+  VOLUME_OPTION="--volume ${PWD}:${volume_name}"
+  VOLUME_DIR="/local"
+else
+  VOLUME_OPTION="--volumes-from ${PARENT_CONTAINER_ID}:rw"
+  VOLUME_DIR="${PWD}"
+fi
+
 echo ::group::BINDINGS
 if [ $2 = 'python' ]
 then
@@ -71,13 +87,13 @@ then
         $ULIMIT_COMMAND \
         $USER_COMMAND \
         --rm \
-        -v ${PWD}:$volume_name \
+        ${VOLUME_OPTION} \
         docker.io/openapitools/openapi-generator-cli:v4.3.1 generate \
-        -i /local/api.json \
+        -i ${VOLUME_DIR}/api.json \
         -g python \
-        -o /local/$1-client \
+        -o ${VOLUME_DIR}/$1-client \
         --additional-properties=packageName=pulpcore.client.$1,projectName=$1-client,packageVersion=${VERSION},domainEnabled=${DOMAIN_ENABLED} \
-        -t /local/templates/python \
+        -t ${VOLUME_DIR}/templates/python \
         --skip-validate-spec \
         --strict-spec=false
     cp python/__init__.py $1-client/pulpcore/
@@ -93,14 +109,14 @@ then
     $container_exec run \
         $ULIMIT_COMMAND \
         $USER_COMMAND \
-        --rm -v ${PWD}:$volume_name \
+        --rm ${VOLUME_OPTION} \
         docker.io/openapitools/openapi-generator-cli:v4.3.1 generate \
-        -i /local/api.json \
+        -i ${VOLUME_DIR}/api.json \
         -g ruby \
-        -o /local/$1-client \
+        -o ${VOLUME_DIR}/$1-client \
         --additional-properties=gemName=$1_client,gemLicense="GPLv2+",gemVersion=${VERSION},gemHomepage=https://github.com/pulp/$1 \
         --library=faraday \
-        -t /local/templates/ruby \
+        -t ${VOLUME_DIR}/templates/ruby \
         --skip-validate-spec \
         --strict-spec=false
 fi
@@ -109,12 +125,12 @@ then
     $container_exec run \
         $ULIMIT_COMMAND \
         $USER_COMMAND \
-        --rm -v ${PWD}:$volume_name \
+        --rm ${VOLUME_OPTION} \
         docker.io/openapitools/openapi-generator-cli:v5.2.1 generate \
-        -i /local/api.json \
+        -i ${VOLUME_DIR}/api.json \
         -g typescript-axios \
-        -o /local/$1-client \
-	      -t /local/templates/typescript-axios \
+        -o ${VOLUME_DIR}/$1-client \
+	      -t ${VOLUME_DIR}/templates/typescript-axios \
         --skip-validate-spec \
         --strict-spec=false
 fi
