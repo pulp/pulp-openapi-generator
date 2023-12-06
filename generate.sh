@@ -52,7 +52,8 @@ then
   # Get the version of the pulpcore or plugin as reported by status API
 fi
 
-export DOMAIN_ENABLED=$(jq -r '.info | ."x-pulp-domain-enabled" // false' < api.json)
+DOMAIN_ENABLED=$(jq -r '.info | ."x-pulp-domain-enabled" // false' < api.json)
+export DOMAIN_ENABLED
 
 if [ $# -gt 2 ];
 then
@@ -66,7 +67,8 @@ else
         COMPONENT_NAME=${1#"pulp_"}
     fi
 
-    export VERSION=$(http ${PULP_URL}status/ | jq --arg plugin $COMPONENT_NAME -r '.versions[] | select(.component == $plugin) | .version')
+    VERSION=$(http ${PULP_URL}status/ | jq --arg plugin $COMPONENT_NAME -r '.versions[] | select(.component == $plugin) | .version')
+    export VERSION
 fi
 
 # Mount volumes from parent container with `--volumes-from` option if the
