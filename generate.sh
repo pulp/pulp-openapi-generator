@@ -67,7 +67,7 @@ else
         COMPONENT_NAME=${1#"pulp_"}
     fi
 
-    VERSION=$(http ${PULP_URL}status/ | jq --arg plugin $COMPONENT_NAME -r '.versions[] | select(.component == $plugin) | .version')
+    VERSION=$(http --auth admin:password GET ${PULP_URL}status/ | jq --arg plugin $COMPONENT_NAME -r '.versions[] | select(.component == $plugin) | .version')
     export VERSION
 fi
 
