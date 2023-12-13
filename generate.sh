@@ -48,7 +48,15 @@ then
   PULP_URL="${PULP_URL}${PULP_API_ROOT}api/v3/"
 
   # Download the schema
-  curl -k -o api.json "${PULP_URL}docs/api.json?bindings&plugin=$1"
+  retry_count=0
+  until curl --fail-with-body -k -o api.json "${PULP_URL}docs/api.json?bindings&plugin=$1"
+  do
+      if [[ $retry_count -eq 10 ]]
+      then
+          break
+      fi
+      sleep 2
+  done
   # Get the version of the pulpcore or plugin as reported by status API
 fi
 
