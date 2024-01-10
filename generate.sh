@@ -75,8 +75,10 @@ else
         COMPONENT_NAME=${1#"pulp_"}
     fi
 
-    VERSION=$(http ${PULP_URL}status/ | jq --arg plugin $COMPONENT_NAME -r '.versions[] | select(.component == $plugin) | .version')
+    curl --fail-with-body -k -o status.json ${PULP_URL}status/
+    VERSION=$(jq --arg plugin $COMPONENT_NAME -r '.versions[] | select(.component == $plugin) | .version' < status.json)
     export VERSION
+    rm status.json
 fi
 
 # Mount volumes from parent container with `--volumes-from` option if the
