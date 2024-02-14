@@ -51,11 +51,12 @@ then
   retry_count=0
   until curl --fail-with-body -k -o api.json "${PULP_URL}docs/api.json?bindings&plugin=$1"
   do
-      if [[ $retry_count -eq 10 ]]
+      if [ $retry_count -eq 10 ]
       then
           break
       fi
       sleep 2
+      ((retry_count++))
   done
   # Get the version of the pulpcore or plugin as reported by status API
 fi
