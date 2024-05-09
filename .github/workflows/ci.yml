@@ -32,10 +32,15 @@ jobs:
           pip install requests
           sh .github/workflows/scripts/check_commit.sh
 
+  docs:
+    uses: "./.github/workflows/docs-ci.yml"
+
   pulp:
     runs-on: ubuntu-latest
-    # run only after lint finishes
-    needs: lint
+    # run only after lint and docs finishes
+    needs:
+      - lint
+      - docs
     strategy:
       fail-fast: false
       matrix:
