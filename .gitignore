@@ -63,8 +63,8 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
-# written in generate.sh
-.openapi-generator-ignore
-
-# generated client packages
+# generated stuff
+/api.json
+/patched-api.json
 /*-client/
+.openapi-generator-ignore

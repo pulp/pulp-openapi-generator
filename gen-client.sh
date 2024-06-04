@@ -61,15 +61,23 @@ else
   VOLUME_DIR="${PWD}"
 fi
 
+REMOVE_COOKIE_AUTH_FILTER='del(.paths[][].security|select(.)[]|select(.cookieAuth))|del(.components.securitySchemes.cookieAuth)'
+
+# These two may be needed when upgrading the generator image
+FIX_TASK_CREATED_RESOURCES_FILTER='(.components.schemas.TaskResponse|select(.)|.properties.created_resources.items) |= {"$oneOf":[{type:"null"},.]}'
+FIX_TASK_ERROR_FILTER='(.components.schemas.TaskResponse|select(.)|.properties.error) |= (del(.readOnly) | .additionalProperties.type = "string")'
+
 if [ "$LANGUAGE" = "python" ]
 then
+  cat "${API_SPEC}" | jq "." > patched-api.json
+
   $CONTAINER_EXEC run \
     "${ULIMIT_COMMAND[@]}" \
     "${USER_COMMAND[@]}" \
     --rm \
     "${VOLUME_OPTION[@]}" \
     "$OPENAPI_PYTHON_IMAGE" generate \
-    -i "${VOLUME_DIR}/${API_SPEC}" \
+    -i "${VOLUME_DIR}/patched-api.json" \
     -g python \
     -o "${VOLUME_DIR}/${PACKAGE}-client" \
     "--additional-properties=packageName=pulpcore.client.${PACKAGE},projectName=${PACKAGE}-client,packageVersion=${VERSION},domainEnabled=${DOMAIN_ENABLED}" \
@@ -86,14 +94,15 @@ then
   mkdir -p "${PACKAGE}-client"
   echo git_push.sh > "${PACKAGE}-client/.openapi-generator-ignore"
 
-  python3 remove-cookie-auth.py
+  cat "${API_SPEC}" | jq "${REMOVE_COOKIE_AUTH_FILTER}" > patched-api.json
+
   $CONTAINER_EXEC run \
     "${ULIMIT_COMMAND[@]}" \
     "${USER_COMMAND[@]}" \
     --rm \
     "${VOLUME_OPTION[@]}" \
     "$OPENAPI_RUBY_IMAGE" generate \
-    -i "${VOLUME_DIR}/${API_SPEC}" \
+    -i "${VOLUME_DIR}/patched-api.json" \
     -g ruby \
     -o "${VOLUME_DIR}/${PACKAGE}-client" \
     "--additional-properties=gemName=${PACKAGE}_client,gemLicense="GPLv2+",gemVersion=${VERSION},gemHomepage=https://github.com/pulp/${PACKAGE}" \
@@ -105,13 +114,15 @@ fi
 
 if [ "$LANGUAGE" = "typescript" ]
 then
+  cat "${API_SPEC}" | jq "." > patched-api.json
+
   $CONTAINER_EXEC run \
     "${ULIMIT_COMMAND[@]}" \
     "${USER_COMMAND[@]}" \
     --rm \
     "${VOLUME_OPTION[@]}" \
     "$OPENAPI_TYPESCRIPT_IMAGE" generate \
-    -i "${VOLUME_DIR}/${API_SPEC}" \
+    -i "${VOLUME_DIR}/patched-api.json" \
     -g typescript-axios \
     -o "${VOLUME_DIR}/${PACKAGE}-client" \
     -t "${VOLUME_DIR}/templates/typescript-axios" \
