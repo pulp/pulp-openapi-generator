@@ -20,7 +20,7 @@ echo "Unnormalized Version: ${VERSION}"
 VERSION="$(python3 -c "from packaging.version import Version; print(Version('${VERSION}'))")"
 echo "Version: ${VERSION}"
 
-OPENAPI_PYTHON_IMAGE="${OPENAPI_PYTHON_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
+OPENAPI_PYTHON_IMAGE="${OPENAPI_PYTHON_IMAGE:-docker.io/openapitools/openapi-generator-cli:v7.6.0}"
 OPENAPI_RUBY_IMAGE="${OPENAPI_RUBY_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
 OPENAPI_TYPESCRIPT_IMAGE="${OPENAPI_TYPESCRIPT_IMAGE:-docker.io/openapitools/openapi-generator-cli:v5.2.1}"
 
@@ -69,7 +69,7 @@ FIX_TASK_ERROR_FILTER='(.components.schemas.TaskResponse|select(.)|.properties.e
 
 if [ "$LANGUAGE" = "python" ]
 then
-  cat "${API_SPEC}" | jq "." > patched-api.json
+  cat "${API_SPEC}" | jq "${FIX_TASK_CREATED_RESOURCES_FILTER}|${FIX_TASK_ERROR_FILTER}" > patched-api.json
 
   $CONTAINER_EXEC run \
     "${ULIMIT_COMMAND[@]}" \
