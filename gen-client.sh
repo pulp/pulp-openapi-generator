@@ -29,7 +29,10 @@ language = sys.argv[1]
 core_version = Version(sys.stdin.read())
 
 if language.lower() == "python":
-    print("v4.3.1")
+    if core_version >= Version("3.70.dev"):
+        print("v7.10.0")
+    else:
+        print("v4.3.1")
 elif language.lower() == "ruby":
     print("v4.3.1")
 elif language.lower() == "typescript":
@@ -93,10 +96,6 @@ else
 fi
 
 REMOVE_COOKIE_AUTH_FILTER='del(.paths[][].security|select(.)[]|select(.cookieAuth))|del(.components.securitySchemes.cookieAuth)'
-
-# These two may be needed when upgrading the generator image
-FIX_TASK_CREATED_RESOURCES_FILTER='(.components.schemas.TaskResponse|select(.)|.properties.created_resources.items) |= {"$oneOf":[{type:"null"},.]}'
-FIX_TASK_ERROR_FILTER='(.components.schemas.TaskResponse|select(.)|.properties.error) |= (del(.readOnly) | .additionalProperties.type = "string")'
 
 if [ "$LANGUAGE" = "python" ]
 then
