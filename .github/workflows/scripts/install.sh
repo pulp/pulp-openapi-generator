@@ -9,52 +9,26 @@
 
 set -euv
 
-mkdir .ci/ansible/vars || true
-echo "---" > .ci/ansible/vars/main.yaml
+# make sure this script runs at the repo root
+cd "$(dirname "$(realpath -e "$0")")"/../../..
 
+TAG="${TAG:-latest}"
+
+mkdir -p .ci/ansible/vars
 cd .ci/ansible/
 
-TAG=ci_build
-
-if [ -n "${GITHUB_REF##*/}" ]; then
-  # Install the plugin only and use published PyPI packages for the rest
-  # Quoting ${TAG} ensures Ansible casts the tag as a string.
-  cat >> vars/main.yaml << VARSYAML
-image:
-  name: pulp
-  tag: "${TAG}"
-plugins:
-  - name: pulpcore
-    source: pulpcore
-  - name: pulp_file
-    source:  "pulp_file"
+cat >> vars/main.yaml << VARSYAML
+---
 services:
   - name: pulp
-    image: "pulp:${TAG}"
+    image: "ghcr.io/pulp/pulp:${TAG}"
     volumes:
       - ./settings:/etc/pulp
 VARSYAML
-else
-  cat >> vars/main.yaml << VARSYAML
-image:
-  name: pulp
-  tag: "${TAG}"
-plugins:
-  - name: pulp_file
-    source: "pulp_file"
-  - name: pulpcore
-    source: ./pulpcore
-services:
-  - name: pulp
-    image: "pulp:${TAG}"
-    volumes:
-      - ./settings:/etc/pulp
-VARSYAML
-fi
 
 cat >> vars/main.yaml << VARSYAML
 pulp_settings: {"allowed_content_checksums": ["sha1", "sha224", "sha256", "sha384", "sha512"], "allowed_export_paths": ["/tmp"], "allowed_import_paths": ["/tmp"]}
 VARSYAML
 
-ansible-playbook build_container.yaml
+# ansible-playbook build_container.yaml
 ansible-playbook start_container.yaml

@@ -10,39 +10,35 @@
 
 set -mveuo pipefail
 
+# make sure this script runs at the repo root
+cd "$(dirname "$(realpath -e "$0")")"/../../..
+
 # Needed for both starting the service and building the docs.
 # Gets set in .github/settings.yml, but doesn't seem to inherited by
 # this script.
-export DJANGO_SETTINGS_MODULE=pulpcore.app.settings
-export PULP_SETTINGS=$GITHUB_WORKSPACE/.ci/ansible/settings/settings.py
-
+export DJANGO_SETTINGS_MODULE="pulpcore.app.settings"
+export PULP_SETTINGS="$PWD/.ci/ansible/settings/settings.py"
 export PULP_URL="http://pulp"
-
-cd $GITHUB_WORKSPACE
 
 ./generate.sh pulpcore python
 pip install ./pulpcore-client
 ./generate.sh pulp_file python
 pip install ./pulp_file-client
 
-python $GITHUB_WORKSPACE/.github/workflows/scripts/test_bindings.py
-cd ../pulp-openapi-generator
+python .github/workflows/scripts/test_bindings.py
 
 rm -rf ./pulpcore-client
+./generate.sh pulpcore ruby
+pushd pulpcore-client
+  gem build pulpcore_client
+  gem install --both ./pulpcore_client-*.gem
+popd
 
-./generate.sh pulpcore ruby 0
-cd pulpcore-client
-gem build pulpcore_client
-gem install --both ./pulpcore_client-0.gem
-cd ..
 rm -rf ./pulp_file-client
-
-./generate.sh pulp_file ruby 0
-
-cd pulp_file-client
+./generate.sh pulp_file ruby
+pushd pulp_file-client
 gem build pulp_file_client
-gem install --both ./pulp_file_client-0.gem
-cd ..
-ruby $GITHUB_WORKSPACE/.github/workflows/scripts/test_bindings.rb
+gem install --both ./pulp_file_client-*.gem
+popd
 
-exit
+ruby .github/workflows/scripts/test_bindings.rb
