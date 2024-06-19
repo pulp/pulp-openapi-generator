@@ -58,7 +58,7 @@
             follow_redirects: none
           register: result
           until: result.status == 200
-          retries: 6
+          retries: 20
           delay: 5
       rescue:
         - name: "Output pulp container log"
