@@ -15,10 +15,10 @@ LANGUAGE="${3:-python}"
 PACKAGE="${4:-pulp_${COMPONENT//-/_}}"
 
 DOMAIN_ENABLED="$(jq -r '.info."x-pulp-domain-enabled" // false' < "${API_SPEC}")"
-VERSION="$(jq -r --arg component "$COMPONENT" '.info."x-pulp-app-versions"[$component]' < "${API_SPEC}")"
-
+VERSION="$(jq -r --arg component "$COMPONENT" '.info."x-pulp-app-versions"[$component] // error("No version found.")' < "${API_SPEC}")"
+echo "Unnormalized Version: ${VERSION}"
+VERSION="$(python3 -c "from packaging.version import Version; print(Version('${VERSION}'))")"
 echo "Version: ${VERSION}"
-[ "${VERSION}" != "none" ]
 
 OPENAPI_PYTHON_IMAGE="${OPENAPI_PYTHON_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
 OPENAPI_RUBY_IMAGE="${OPENAPI_RUBY_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
