@@ -21,7 +21,7 @@ VERSION="$(python3 -c "from packaging.version import Version; print(Version('${V
 echo "Version: ${VERSION}"
 
 OPENAPI_PYTHON_IMAGE="${OPENAPI_PYTHON_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
-OPENAPI_RUBY_IMAGE="${OPENAPI_RUBY_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
+OPENAPI_RUBY_IMAGE="${OPENAPI_RUBY_IMAGE:-docker.io/openapitools/openapi-generator-cli:v5.0.0}"
 OPENAPI_TYPESCRIPT_IMAGE="${OPENAPI_TYPESCRIPT_IMAGE:-docker.io/openapitools/openapi-generator-cli:v5.2.1}"
 
 if command -v podman > /dev/null
