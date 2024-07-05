@@ -83,6 +83,7 @@ fi
 if [ "$LANGUAGE" = "ruby" ]
 then
   # https://github.com/OpenAPITools/openapi-generator/wiki/FAQ#how-to-skip-certain-files-during-code-generation
+  # useAutoload fix: https://github.com/OpenAPITools/openapi-generator/issues/12854
   mkdir -p "${PACKAGE}-client"
   echo git_push.sh > "${PACKAGE}-client/.openapi-generator-ignore"
 
@@ -96,7 +97,7 @@ then
     -i "${VOLUME_DIR}/${API_SPEC}" \
     -g ruby \
     -o "${VOLUME_DIR}/${PACKAGE}-client" \
-    "--additional-properties=gemName=${PACKAGE}_client,gemLicense="GPLv2+",gemVersion=${VERSION},gemHomepage=https://github.com/pulp/${PACKAGE}" \
+    "--additional-properties=gemName=${PACKAGE}_client,gemLicense="GPLv2+",gemVersion=${VERSION},gemHomepage=https://github.com/pulp/${PACKAGE},useAutoload=true" \
     --library=faraday \
     -t "${VOLUME_DIR}/templates/ruby" \
     --skip-validate-spec \
