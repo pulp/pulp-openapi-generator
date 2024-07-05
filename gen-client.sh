@@ -98,6 +98,7 @@ then
     -o "${VOLUME_DIR}/${PACKAGE}-client" \
     "--additional-properties=gemName=${PACKAGE}_client,gemLicense="GPLv2+",gemVersion=${VERSION},gemHomepage=https://github.com/pulp/${PACKAGE}" \
     --library=faraday \
+    -t "${VOLUME_DIR}/templates/ruby" \
     --skip-validate-spec \
     --strict-spec=false
 fi

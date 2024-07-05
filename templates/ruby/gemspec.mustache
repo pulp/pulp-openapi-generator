@@ -21,7 +21,9 @@ Gem::Specification.new do |s|
   s.metadata    = {{{gemMetadata}}}{{^gemMetadata}}{}{{/gemMetadata}}
 
   {{#isFaraday}}
-  s.add_runtime_dependency 'faraday', '>= 1.0.1', '< 3.0'
+  {{! override-note: 2.0.1 lowerbound is recommended by faraday upgrade guide }}
+  {{! override-note: 2.9.0 upperbound is the max version below 3 that support ruby>2.6 }}
+  s.add_runtime_dependency 'faraday', '>= 2.0.1', '< 2.9.0'
   s.add_runtime_dependency 'faraday-multipart'
   s.add_runtime_dependency 'marcel'
   {{/isFaraday}}
