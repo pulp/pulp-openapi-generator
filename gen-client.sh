@@ -21,7 +21,7 @@ VERSION="$(python3 -c "from packaging.version import Version; print(Version('${V
 echo "Version: ${VERSION}"
 
 OPENAPI_PYTHON_IMAGE="${OPENAPI_PYTHON_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
-OPENAPI_RUBY_IMAGE="${OPENAPI_RUBY_IMAGE:-docker.io/openapitools/openapi-generator-cli:v5.0.0}"
+OPENAPI_RUBY_IMAGE="${OPENAPI_RUBY_IMAGE:-docker.io/openapitools/openapi-generator-cli:v7.6.0}"
 OPENAPI_TYPESCRIPT_IMAGE="${OPENAPI_TYPESCRIPT_IMAGE:-docker.io/openapitools/openapi-generator-cli:v5.2.1}"
 
 if command -v podman > /dev/null
@@ -98,7 +98,6 @@ then
     -o "${VOLUME_DIR}/${PACKAGE}-client" \
     "--additional-properties=gemName=${PACKAGE}_client,gemLicense="GPLv2+",gemVersion=${VERSION},gemHomepage=https://github.com/pulp/${PACKAGE}" \
     --library=faraday \
-    -t "${VOLUME_DIR}/templates/ruby" \
     --skip-validate-spec \
     --strict-spec=false
 fi
