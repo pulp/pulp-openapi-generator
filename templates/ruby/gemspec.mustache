@@ -16,21 +16,23 @@ Gem::Specification.new do |s|
   s.homepage    = "{{gemHomepage}}{{^gemHomepage}}https://openapi-generator.tech{{/gemHomepage}}"
   s.summary     = "{{gemSummary}}{{^gemSummary}}{{{appName}}} Ruby Gem{{/gemSummary}}"
   s.description = "{{gemDescription}}{{^gemDescription}}{{{appDescription}}}{{^appDescription}}{{{appName}}} Ruby Gem{{/appDescription}}{{/gemDescription}}"
-  {{#gemLicense}}
-  s.license     = '{{{gemLicense}}}'
-  {{/gemLicense}}
-  {{^gemLicense}}
-  s.license     = "Unlicense"
-  {{/gemLicense}}
-  s.required_ruby_version = "{{{gemRequiredRubyVersion}}}{{^gemRequiredRubyVersion}}>= 1.9{{/gemRequiredRubyVersion}}"
+  s.license     = "{{{gemLicense}}}{{^gemLicense}}Unlicense{{/gemLicense}}"
+  s.required_ruby_version = "{{{gemRequiredRubyVersion}}}{{^gemRequiredRubyVersion}}>= 2.7{{/gemRequiredRubyVersion}}"
+  s.metadata    = {{{gemMetadata}}}{{^gemMetadata}}{}{{/gemMetadata}}
 
   {{#isFaraday}}
-  s.add_runtime_dependency 'faraday', '>= 1.0.1', '< 2.0'
+  {{! override-note: 2.0.1 lowerbound is recommended by faraday upgrade guide }}
+  {{! override-note: 2.9.0 upperbound is the max version below 3 that support ruby>2.6 }}
+  s.add_runtime_dependency 'faraday', '>= 2.0.1', '< 2.9.0'
+  s.add_runtime_dependency 'faraday-multipart'
+  s.add_runtime_dependency 'marcel'
   {{/isFaraday}}
-  {{^isFaraday}}
+  {{#isTyphoeus}}
   s.add_runtime_dependency 'typhoeus', '~> 1.0', '>= 1.0.1'
-  {{/isFaraday}}
-  s.add_runtime_dependency 'json', '~> 2.1', '>= 2.1.0'
+  {{/isTyphoeus}}
+  {{#isHttpx}}
+  s.add_runtime_dependency 'httpx', '~> 1.0', '>= 1.0.0'
+  {{/isHttpx}}
 
   s.add_development_dependency 'rspec', '~> 3.6', '>= 3.6.0'
 

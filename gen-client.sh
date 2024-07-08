@@ -21,7 +21,7 @@ VERSION="$(python3 -c "from packaging.version import Version; print(Version('${V
 echo "Version: ${VERSION}"
 
 OPENAPI_PYTHON_IMAGE="${OPENAPI_PYTHON_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
-OPENAPI_RUBY_IMAGE="${OPENAPI_RUBY_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
+OPENAPI_RUBY_IMAGE="${OPENAPI_RUBY_IMAGE:-docker.io/openapitools/openapi-generator-cli:v7.6.0}"
 OPENAPI_TYPESCRIPT_IMAGE="${OPENAPI_TYPESCRIPT_IMAGE:-docker.io/openapitools/openapi-generator-cli:v5.2.1}"
 
 if command -v podman > /dev/null
@@ -91,6 +91,7 @@ fi
 if [ "$LANGUAGE" = "ruby" ]
 then
   # https://github.com/OpenAPITools/openapi-generator/wiki/FAQ#how-to-skip-certain-files-during-code-generation
+  # useAutoload fix: https://github.com/OpenAPITools/openapi-generator/issues/12854
   mkdir -p "${PACKAGE}-client"
   echo git_push.sh > "${PACKAGE}-client/.openapi-generator-ignore"
 
@@ -105,7 +106,7 @@ then
     -i "${VOLUME_DIR}/patched-api.json" \
     -g ruby \
     -o "${VOLUME_DIR}/${PACKAGE}-client" \
-    "--additional-properties=gemName=${PACKAGE}_client,gemLicense="GPLv2+",gemVersion=${VERSION},gemHomepage=https://github.com/pulp/${PACKAGE}" \
+    "--additional-properties=gemName=${PACKAGE}_client,gemLicense="GPLv2+",gemVersion=${VERSION},gemHomepage=https://github.com/pulp/${PACKAGE},useAutoload=true" \
     --library=faraday \
     -t "${VOLUME_DIR}/templates/ruby" \
     --skip-validate-spec \
