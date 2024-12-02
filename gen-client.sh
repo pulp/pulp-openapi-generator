@@ -9,27 +9,58 @@ then
   exit 1
 fi
 
+normalize_version ()
+{
+  python3 -c '
+import sys
+from packaging.version import Version
+
+print(Version(sys.stdin.read()))
+'
+}
+
+generator_version ()
+{
+  python3 -c '
+import sys
+from packaging.version import Version
+
+language = sys.argv[1]
+core_version = Version(sys.stdin.read())
+
+if language.lower() == "python":
+    print("v4.3.1")
+elif language.lower() == "ruby":
+    print("v4.3.1")
+elif language.lower() == "typescript":
+    print("v5.2.1")
+else:
+    exit(1)
+' "$@"
+}
+
 API_SPEC="$1"
 COMPONENT="$2"
 LANGUAGE="${3:-python}"
 PACKAGE="${4:-pulp_${COMPONENT//-/_}}"
 
 DOMAIN_ENABLED="$(jq -r '.info."x-pulp-domain-enabled" // false' < "${API_SPEC}")"
-VERSION="$(jq -r --arg component "$COMPONENT" '.info."x-pulp-app-versions"[$component] // error("No version found.")' < "${API_SPEC}")"
-echo "Unnormalized Version: ${VERSION}"
-VERSION="$(python3 -c "from packaging.version import Version; print(Version('${VERSION}'))")"
-echo "Version: ${VERSION}"
+VERSION="$(jq -r --arg component "${COMPONENT}" '.info."x-pulp-app-versions"[$component] // error("No version found.")' < "${API_SPEC}" | normalize_version)"
+CORE_VERSION="$(jq -r '.info."x-pulp-app-versions".core // "0.0.0"' < "${API_SPEC}" | normalize_version)"
+GENERATOR_VERSION="$(generator_version "${LANGUAGE}" <<<"${CORE_VERSION}")"
+IMAGE_OVERRIDE_VAR="OPENAPI_${LANGUAGE^^}_IMAGE"
+OPENAPI_IMAGE="${!IMAGE_OVERRIDE_VAR:-docker.io/openapitools/openapi-generator-cli:${GENERATOR_VERSION}}"
+IMAGE_TAG="${OPENAPI_IMAGE#*:}"
 
-OPENAPI_PYTHON_IMAGE="${OPENAPI_PYTHON_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
-OPENAPI_RUBY_IMAGE="${OPENAPI_RUBY_IMAGE:-docker.io/openapitools/openapi-generator-cli:v4.3.1}"
-OPENAPI_TYPESCRIPT_IMAGE="${OPENAPI_TYPESCRIPT_IMAGE:-docker.io/openapitools/openapi-generator-cli:v5.2.1}"
+echo "${COMPONENT}: ${VERSION}  core: ${CORE_VERSION}  domains: ${DOMAIN_ENABLED}  generator: ${GENERATOR_VERSION}"
+echo "Using: ${OPENAPI_IMAGE}"
 
 if command -v podman > /dev/null
 then
   CONTAINER_EXEC=podman
   if [[ -n "${PULP_MCS_LABEL:-}" ]]
   then
-    USER_COMMAND=("--userns=keep-id" "--security-opt" "label=level:$PULP_MCS_LABEL")
+    USER_COMMAND=("--userns=keep-id" "--security-opt" "label=level:${PULP_MCS_LABEL}")
   else
     USER_COMMAND=("--userns=keep-id")
   fi
@@ -38,7 +69,7 @@ else
   CONTAINER_EXEC=docker
   if [[ -n "${PULP_MCS_LABEL:-}" ]]
   then
-    USER_COMMAND=("-u" "$(id -u)" "--security-opt" "label=level:$PULP_MCS_LABEL")
+    USER_COMMAND=("-u" "$(id -u)" "--security-opt" "label=level:${PULP_MCS_LABEL}")
   else
     USER_COMMAND=("-u" "$(id -u)")
   fi
@@ -76,12 +107,12 @@ then
     "${USER_COMMAND[@]}" \
     --rm \
     "${VOLUME_OPTION[@]}" \
-    "$OPENAPI_PYTHON_IMAGE" generate \
+    "${OPENAPI_IMAGE}" generate \
     -i "${VOLUME_DIR}/patched-api.json" \
     -g python \
     -o "${VOLUME_DIR}/${PACKAGE}-client" \
     "--additional-properties=packageName=pulpcore.client.${PACKAGE},projectName=${PACKAGE}-client,packageVersion=${VERSION},domainEnabled=${DOMAIN_ENABLED}" \
-    -t "${VOLUME_DIR}/templates/python" \
+    -t "${VOLUME_DIR}/templates/python/${IMAGE_TAG}" \
     --skip-validate-spec \
     --strict-spec=false
   cp python/__init__.py "${PACKAGE}-client/pulpcore/"
@@ -101,13 +132,13 @@ then
     "${USER_COMMAND[@]}" \
     --rm \
     "${VOLUME_OPTION[@]}" \
-    "$OPENAPI_RUBY_IMAGE" generate \
+    "${OPENAPI_IMAGE}" generate \
     -i "${VOLUME_DIR}/patched-api.json" \
     -g ruby \
     -o "${VOLUME_DIR}/${PACKAGE}-client" \
     "--additional-properties=gemName=${PACKAGE}_client,gemLicense="GPLv2+",gemVersion=${VERSION},gemHomepage=https://github.com/pulp/${PACKAGE}" \
     --library=faraday \
-    -t "${VOLUME_DIR}/templates/ruby" \
+    -t "${VOLUME_DIR}/templates/ruby/${IMAGE_TAG}" \
     --skip-validate-spec \
     --strict-spec=false
 fi
@@ -121,7 +152,7 @@ then
     "${USER_COMMAND[@]}" \
     --rm \
     "${VOLUME_OPTION[@]}" \
-    "$OPENAPI_TYPESCRIPT_IMAGE" generate \
+    "${OPENAPI_TYPESCRIPT_IMAGE}" generate \
     -i "${VOLUME_DIR}/patched-api.json" \
     -g typescript-axios \
     -o "${VOLUME_DIR}/${PACKAGE}-client" \
