@@ -7,10 +7,10 @@
 #
 # For more info visit https://github.com/pulp/plugin_template
 
-set -euv
-
 # make sure this script runs at the repo root
 cd "$(dirname "$(realpath -e "$0")")"/../../..
+
+set -euv
 
 TAG="${TAG:-latest}"
 

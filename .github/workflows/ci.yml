@@ -1,56 +1,63 @@
 ---
-name: pulp-openapi-generator PR CI
-on: pull_request
+name: "pulp-openapi-generator PR CI"
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.ref_name }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: "pulp-openapi-generator"
 
 jobs:
-
-  lint:
-    runs-on: ubuntu-latest
-
+  check-commits:
+    runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v2
+      - uses: "actions/checkout@v4"
         with:
-          # by default, it uses a depth of 1
-          # this fetches all history so that we can read each commit
           fetch-depth: 0
-
-      - uses: actions/setup-python@v2
+          path: "pulp-openapi-generator"
+      - uses: "actions/setup-python@v5"
         with:
-          python-version: "3.8"
-
-      - name: Check commit message
+          python-version: "3.11"
+      - name: "Install python dependencies"
+        run: |
+          pip install requests pygithub
+      - name: "Check commit message"
         if: github.event_name == 'pull_request'
         env:
-          GITHUB_CONTEXT: ${{ github.event.pull_request.commits_url }}
+          PY_COLORS: "1"
+          ANSIBLE_FORCE_COLOR: "1"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_CONTEXT: "${{ github.event.pull_request.commits_url }}"
         run: |
-          pip install requests
-          sh .github/workflows/scripts/check_commit.sh
+          .github/workflows/scripts/check_commit.sh
 
   docs:
-    uses: "./.github/workflows/docs-ci.yml"
+    uses: "./.github/workflows/docs.yml"
 
-  pulp:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: "ubuntu-latest"
     # run only after lint and docs finishes
     needs:
-      - lint
-      - docs
+      - "docs"
     strategy:
       fail-fast: false
       matrix:
         env:
-          - TEST: pulp
+          - TEST: "pulp"
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: "actions/checkout@v4"
         with:
-          # by default, it uses a depth of 1
-          # this fetches all history so that we can read each commit
           fetch-depth: 0
+          path: "pulp-openapi-generator"
 
-      - uses: actions/setup-python@v2
+      - uses: "actions/setup-python@v5"
         with:
-          python-version: "3.8"
+          python-version: "3.11"
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -93,3 +100,20 @@ jobs:
           docker logs pulp || true
           docker exec pulp ls -latr /etc/yum.repos.d/ || true
           docker exec pulp cat /etc/yum.repos.d/* || true
+
+  ready-to-ship:
+    # This is a dummy dependent task to have a single entry for the branch protection rules.
+    runs-on: "ubuntu-latest"
+    needs:
+      - "check-commits"
+      - "test"
+      - "docs"
+    if: "always()"
+    steps:
+      - name: "Collect needed jobs results"
+        working-directory: "."
+        run: |
+          echo '${{toJson(needs)}}' | jq -r 'to_entries[]|select(.value.result!="success")|.key + ": " + .value.result'
+          echo '${{toJson(needs)}}' | jq -e 'to_entries|map(select(.value.result!="success"))|length == 0'
+          echo "CI says: Looks good!"
+...
