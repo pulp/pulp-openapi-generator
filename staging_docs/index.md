@@ -1,4 +1,4 @@
-# Overview
+# Welcome to pulp-bindings
 
 This repository provides a script that helps generate Python and Ruby bindings for pulpcore or any of it's
 plugins.
