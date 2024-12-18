@@ -15,5 +15,6 @@ jobs:
       - name: "Install Test Dependencies"
         run: |
           pip install -r doc_requirements.txt
-      - name: Build docs
-        run: make docs
+      - name: "Build docs"
+        run: |
+          make docs

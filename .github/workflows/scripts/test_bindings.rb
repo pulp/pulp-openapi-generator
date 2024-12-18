@@ -40,7 +40,6 @@ def monitor_task(task_href)
     #
     # Returns:
     #     list[str]: List of hrefs that identify resource created by the task
-    completed = []
     task = @tasks_api.read(task_href)
     until ["completed", "failed", "canceled"].include? task.state
       sleep(2)
@@ -86,8 +85,8 @@ def upload_file_in_chunks(file_path)
           filechunk.write(chunk)
           filechunk.flush()
           actual_chunk_size = File.size(filechunk)
-          response = @uploads_api.update(content_range(offset, offset + actual_chunk_size -1, total_size), upload_href, filechunk)
-          offset += actual_chunk_size -1
+          response = @uploads_api.update(content_range(offset, offset + actual_chunk_size - 1, total_size), upload_href, filechunk)
+          offset += actual_chunk_size - 1
         ensure
           filechunk.close
           filechunk.unlink
@@ -100,7 +99,7 @@ def upload_file_in_chunks(file_path)
 end
 
 
-artifact = upload_file_in_chunks(File.join(ENV['GITHUB_WORKSPACE'], 'README.rst'))
+artifact = upload_file_in_chunks(File.new(File.expand_path(__FILE__)))
 
 # Create a File Remote
 remote_url = 'https://fixtures.pulpproject.org/file/PULP_MANIFEST'
@@ -120,12 +119,8 @@ created_resources = monitor_task(sync_response.task)
 
 repository_version_1 = @repoversions_api.read(created_resources[0])
 
-# Create an artifact from a local file
-file_path = File.join(ENV['GITHUB_WORKSPACE'], '.github/workflows/scripts/test_bindings.rb')
-artifact = @artifacts_api.create(File.new(file_path))
-
-# Create a FileContent from the artifact
-filecontent_response = @filecontent_api.create('foo.tar.gz', {artifact: artifact.pulp_href})
+# Create a FileContent from a local file
+filecontent_response = @filecontent_api.create('foo.tar.gz', {file: File.new(File.expand_path(__FILE__))})
 
 created_resources = monitor_task(filecontent_response.task)
 

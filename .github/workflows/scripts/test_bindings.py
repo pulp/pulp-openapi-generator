@@ -152,8 +152,7 @@ repository_version_1 = filerepoversions.read(created_resources[0])
 pprint(repository_version_1)
 
 # Create an artifact from a local file
-file_path = os.path.join(os.environ["GITHUB_WORKSPACE"], ".github/workflows/scripts/test_bindings.py")
-artifact = artifacts.create(file=file_path)
+artifact = artifacts.create(file=__file__)
 pprint(artifact)
 
 # Create a FileContent from the artifact
