@@ -34,7 +34,10 @@ if language.lower() == "python":
     else:
         print("v4.3.1")
 elif language.lower() == "ruby":
-    print("v4.3.1")
+    if core_version >= Version("3.70.dev"):
+        print("v7.10.0")
+    else:
+        print("v4.3.1")
 elif language.lower() == "typescript":
     print("v5.2.1")
 else:
