@@ -54,7 +54,7 @@ DOMAIN_ENABLED="$(jq -r '.info."x-pulp-domain-enabled" // false' < "${API_SPEC}"
 VERSION="$(jq -r --arg component "${COMPONENT}" '.info."x-pulp-app-versions"[$component] // error("No version found.")' < "${API_SPEC}" | normalize_version)"
 CORE_VERSION="$(jq -r '.info."x-pulp-app-versions".core // "0.0.0"' < "${API_SPEC}" | normalize_version)"
 GENERATOR_VERSION="$(generator_version "${LANGUAGE}" <<<"${CORE_VERSION}")"
-IMAGE_OVERRIDE_VAR="OPENAPI_${LANGUAGE^^}_IMAGE"
+IMAGE_OVERRIDE_VAR="OPENAPI_$(echo "${LANGUAGE}" | tr '[:lower:]' '[:upper:]')_IMAGE"
 OPENAPI_IMAGE="${!IMAGE_OVERRIDE_VAR:-docker.io/openapitools/openapi-generator-cli:${GENERATOR_VERSION}}"
 IMAGE_TAG="${OPENAPI_IMAGE#*:}"
 
