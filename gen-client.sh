@@ -50,6 +50,7 @@ COMPONENT="$2"
 LANGUAGE="${3:-python}"
 PACKAGE="${4:-pulp_${COMPONENT//-/_}}"
 
+OPENAPI_VERSION="$(jq -r '.openapi // false' < "${API_SPEC}")"
 DOMAIN_ENABLED="$(jq -r '.info."x-pulp-domain-enabled" // false' < "${API_SPEC}")"
 VERSION="$(jq -r --arg component "${COMPONENT}" '.info."x-pulp-app-versions"[$component] // error("No version found.")' < "${API_SPEC}" | normalize_version)"
 CORE_VERSION="$(jq -r '.info."x-pulp-app-versions".core // "0.0.0"' < "${API_SPEC}" | normalize_version)"
@@ -58,7 +59,7 @@ IMAGE_OVERRIDE_VAR="OPENAPI_${LANGUAGE^^}_IMAGE"
 OPENAPI_IMAGE="${!IMAGE_OVERRIDE_VAR:-docker.io/openapitools/openapi-generator-cli:${GENERATOR_VERSION}}"
 IMAGE_TAG="${OPENAPI_IMAGE#*:}"
 
-echo "${COMPONENT}: ${VERSION}  core: ${CORE_VERSION}  domains: ${DOMAIN_ENABLED}  generator: ${GENERATOR_VERSION}"
+echo "${COMPONENT}: ${VERSION}  core: ${CORE_VERSION}  domains: ${DOMAIN_ENABLED}  generator: ${GENERATOR_VERSION}  openapi: ${OPENAPI_VERSION}"
 echo "Using: ${OPENAPI_IMAGE}"
 
 if command -v podman > /dev/null
