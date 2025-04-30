@@ -1,75 +1,84 @@
 # Generate Bindings
 
-## Requirements
+Generate a client binding for any Pulp component for the language of your choice.
 
-- Pulp 3 running on `localhost:24817`
-- Docker or Podman
+!!! warning "Language Support"
 
-## Basic Usage
+    Only python and ruby bindings have some testing, although not extensive.
 
+    For python clients, we recommend looking at [pulp-glue] as an alternative.
+    That library is handcrafted, handles tasks for you and knows how to deal with different versions of Pulp and plugins.
 
-The `generate.sh` script takes three positional arguments:
+    If you need to tweak the generator to make it work for your language, have a look at [how it works].
 
-```
-./generate.sh <module-name> <language> [<version>]  
-```
+## Overview
 
-When the optional version parameter is provided, it is used as the version string.
-When it is not provided, the version reported by Pulp's status API is used.
+- Requirements:
+    - git
+    - Python 3
+    - Docker/Podman
+- General workflow:
+    1. Clone `pulp-openapi-generator`.
+    1. Get the openapi schema for the desired Pulp components.
+    1. Run the generator cli from the the repository
 
-The final packages are stored in the `{plugin_label}-client` directory.
+## Setup
 
-Examples:
+To get started, first clone the repo into your machine.
+It'll be used as the workspace for the bindings generation.
 
 ```bash
-# Create Python Package in 'pulpcore-client/'.
-# Uses API reported  version
-sudo ./generate.sh pulpcore python
-
-# Create Ruby Gem in 'pulp_rpm-client/'.
-# Uses API reported version
-sudo ./generate.sh pulp_rpm ruby
-
-# Create Ruby Gem 'pulp_rpm-client/'.
-# Uses '3.0.0rc1.dev.10' version
-sudo ./generate.sh pulp_rpm ruby 3.0.0rc1.dev.10
+git clone https://github.com/pulp/pulp-openapi-generator
+cd pulp-openapi-generator
 ```
 
-## Special Cases
+## Get the schema
 
-### Re-Rooted Systems
+There are two basic options to get an openapi schema: (1) from an installed package and (2) from a running installation.
 
-During bindings generation the openapi schema is fetched. Use the `PULP_API_ROOT` environment
-variable to instruct the bindings generator where the root of the API is located. For example, the
-default `export PULP_API_ROOT="/pulp/"` is the default root, which then serves the api.json at
-`/pulp/api/v3/docs/api.json`.
+Note that the `api.spec` must be generated with the `--bindings` flag/url-option.
+That spec is tailored for bindings generation and isn't a fully compliant `api.spec`.
 
-### Remote Systems
+1. From a python environment with Pulp packages installed.
 
-During bindings generation the openapi schema is fetched. Use the `PULP_API` environment
-variable to instruct the bindings generator to use a Pulp API on a different host and/or port.
-For example, `export PULP_API="http://localhost:24817"` are the default host and port, which
-results in the bindings generator talking to the Pulp API at
-`http://localhost:24817/pulp/api/v3/docs/api.json`.
+    ```bash
+    pulpcore-manager openapi --bindings \
+        --component "core" \
+        --file "core-api.json"
+    ```
 
-### Local Openapi Schema
+    Some Pulp settings affect client generation directly (e.g, `API_ROOT` and `DOMAIN_ENABLED`).
+    If you run this command outside of a Pulp operating enviroment,
+    you may need to pass an additional `--settings settings.py` parameter pointing to the corresponding settings of your target installation.
 
-If you want to use a locally present openapi schema, you can skip fetching the openapi schema
-by setting the `USE_LOCAL_API_JSON` environment variable. Doing so you have to manually provide the
-`api.json` file containing the openapi schema in the current working directory.
+1. From a running pulp instance:
 
-### Docker in Docker (dind)
+    ```bash
+    PULP_URL="http://pulp.example/pulp/api/v3/"
+    COMPONENT="core"
+    URL="${PULP_URL}docs/api.json?bindings&component=${COMPONENT}"
+    curl "${URL}" -o "${COMPONENT}-api.json"
+    ```
 
-Bindings are generated using the openapi-generator-cli docker container. If your environment itself runs in
-a docker container, the openapi-generator-cli container has to be started as a sibling container. For
-sibling containers, volumes cannot be mounted as usual. They have to be passed through from the parent
-container. For this to work you have to set the `PARENT_CONRAINER_ID` environment variable to specify the
-parent container in a dind environment.
+## Generate the client
 
-### Filesystem Shared With Another Container
+The script uses the [openapi-generator-cli image] to generate the clients, so the first run may take some time to download it.
 
-When the bindings are being generated so that they can be installed inside another container, it
-may be necessary to set the MCS label on the openapi-generator-cli container to match the MCS label
-of the other container. Users can set the \$PULP_MCS_LABEL environment variable (e.g. s0:c1,c2).
-When this variable is present, the container for `openapi-generator-cli` will be started with this
-MCS label. This only applies to systems that are using `podman` and SELinux is `Enforcing`.
+In the example, a ruby package for pulpcore will be generated at `./pulp_rpm-client/` using an existing schema `rpm-api.json`:
+
+```bash
+./gen-client.sh rpm-api.json rpm ruby
+```
+
+## Further reading
+
+- For Docker-in-Docker (dind) environments, see the [PARENT_CONTAINER_ID] setting.
+- For filesystem shared with another container, see the [PULP_MCS_LABEL] setting.
+- If you are upgrading pulpcore to `>3.70`, check the [migration guide].
+
+[how it works]: site:pulp-openapi-generator/docs/user/learn/how-it-works/
+[migration guide]: site:pulp-openapi-generator/docs/user/guides/version-migrations/
+[openapi-generator-cli image]: https://openapi-generator.tech/docs/installation/#docker
+[parent_container_id]: site:pulp-openapi-generator/docs/user/reference/settings/#parent_container_id
+[pulp-glue]: site:pulp-glue/docs/dev/
+[pulp_mcs_label]: site:pulp-openapi-generator/docs/user/reference/settings/#pulp_mcs_label.
