@@ -2,9 +2,30 @@
 
 set -eu
 
+# set -x
+
 if [ $# -eq 0 ]
 then
-  echo "No arguments provided"
+  cat << EOF
+No arguments provided.
+$(basename "$0") - Generate client libraries for pulp plugins.
+
+USAGE
+    $(basename "$0") <component> [client_language]
+
+DESCRIPTION
+    The command will generate a client at the root of the repository inside a directory
+    named '{plugin_name}-client/'.
+
+    Learn more on https://pulpproject.org/pulp-openapi-generator
+
+EXAMPLES
+    PULP_URL=http://localhost:5001 $(basename "$0") pulp_rpm ruby
+        Create pulp_rpm ruby client using api_spec fetched from a Pulp instance at locahost:5001
+
+    USE_LOCAL_API_JSON=/tmp/api.json $(basename "$0") pulp_rpm
+        Create pulp_rpm python (default) client using a local api_spec
+EOF
   exit 1
 fi
 
@@ -39,7 +60,7 @@ fi
 
 echo ::group::BINDINGS
 
-./gen-client.sh api.json "${COMPONENT}" "${2:-python}" "${1}"
+./gen-client.sh "${USE_LOCAL_API_JSON:-api.json}" "${COMPONENT}" "${2:-python}" "${1}"
 
 echo ::endgroup::
 if [[ -z "${USE_LOCAL_API_JSON:-}" ]]
