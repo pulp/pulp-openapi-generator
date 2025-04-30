@@ -100,5 +100,9 @@ of the other container.
 When this variable is present, the container for `openapi-generator-cli` will be started with this
 MCS label. This only applies to systems that are using `podman` and SELinux is `Enforcing`.
 
+### `USE_GENERATOR_VERSION`
 
+**For building clients with non-standard versions**.
+Specify the OpenAPI-Generator image version to use.
 
+This is not guaranted to work.
