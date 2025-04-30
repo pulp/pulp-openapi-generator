@@ -21,6 +21,10 @@ print(Version(sys.stdin.read()))
 
 generator_version ()
 {
+  if [[ -n "${USE_GENERATOR_VERSION:-}" ]]; then
+    echo "v${USE_GENERATOR_VERSION}"
+    return
+  fi
   python3 -c '
 import sys
 from packaging.version import Version
