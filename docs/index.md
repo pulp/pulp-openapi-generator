@@ -1,6 +1,7 @@
 # Welcome to Pulp OpenAPI-Generator
 
-This repository provides a script that helps generate Python and Ruby bindings for pulpcore or any of it's
-plugins.
+This repository provides a script and a base setup to help generate different language bindings for pulpcore or any of it's plugins.
 
-Learn how to get started [here](site:pulp-openapi-generator/docs/user/tutorials/quickstart).
+* [Learn how it works](site:pulp-openapi-generator/docs/user/learn/how-it-works/)
+* [Get started quickly](site:pulp-openapi-generator/docs/user/guides/generate-bindings/).
+
