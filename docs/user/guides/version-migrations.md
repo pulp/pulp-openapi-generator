@@ -10,17 +10,17 @@ Upgrading pulpcore from a `<3.70` to a `>=3.70` version will bump the `openapi-g
 
 ### Python
 
-* `Response.to_dict()|.to_json()` returns a dictionary without read-only fields.
+- `Response.to_dict()|.to_json()` returns a dictionary without read-only fields.
     - **Example**: `pulp_href` isn't present anymore.
     - **Actions**:
         - Use `Response.model_dump()` if Pydantic 2 is available. See [model_dump docs].
         - Otherwise, interact directly with the `Response` object.
-* Client-side validation is more strict.
+- Client-side validation is more strict.
     - **Example**: Error handling depending on server-errors might break.
     - **Actions**: Update code to use client-side errors.
-* Clients now use named arguments instead of positional ones
+- Clients now use named arguments instead of positional ones
     - **Action**: use named arguments.
-* Object such as Path or UUID are not accepted as input
+- Object such as Path or UUID are not accepted as input
     - **Action**: cast to string. E.g `str(uuid)` and `str(path)`.
 
 ### Ruby

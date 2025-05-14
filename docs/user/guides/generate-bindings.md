@@ -1,11 +1,24 @@
 # Generate Bindings
 
-* Requirements:
-    * Docker/Podman compose
-* General workflow:
+Generate a client binding for any Pulp component for the language of your choice.
+
+!!! warning "Language Support"
+
+    Only python and ruby bindings have some testing, although not extensive.
+
+    For python clients, we recommend looking at [pulp-glue] as an alternative.
+    That library is handcrafted, handles tasks for you and knows how to deal with different versions of Pulp and plugins.
+
+    If you need to tweak the generator to make it work for your language, have a look at [how it works].
+
+## Overview
+
+- Requirements:
+    - Docker/Podman compose
+- General workflow:
     1. Clone `pulp-openapi-generator`.
-    2. Get the openapi schema for the desired Pulp components.
-    3. Run the generator cli from the the repository
+    1. Get the openapi schema for the desired Pulp components.
+    1. Run the generator cli from the the repository
 
 ## 1) Setup
 
@@ -26,10 +39,10 @@ Here are some options to get a openapi schema:
     ```bash
     pulpcore-manager openapi --bindings \
         --component "core" \
-        --file "core-api.json"      
+        --file "core-api.json"
     ```
 
-2. From a running pulp instance:
+1. From a running pulp instance:
 
     ```bash
     PULP_URL="http://localhost:24817/pulp/api/v3/"
@@ -54,8 +67,9 @@ In the example, a ruby package for pulpcore will be generated at `./pulp_rpm-cli
 - For filesystem shared with another container, see the [PULP_MCS_LABEL] setting.
 - If you are upgrading pulpcore to `>3.70`, check the [migration guide].
 
-[pulp_mcs_label]: site:pulp-openapi-generator/docs/user/reference/settings/#pulp_mcs_label.
-[parent_container_id]: site:pulp-openapi-generator/docs/user/reference/settings/#parent_container_id
+[how it works]: site:pulp-openapi-generator/docs/user/learn/how-it-works/
 [migration guide]: site:pulp-openapi-generator/docs/user/guides/version-migrations/
-[settings reference]: site:pulp-openapi-generator/docs/user/reference/settings/
 [openapi-generator-cli image]: https://openapi-generator.tech/docs/installation/#docker
+[parent_container_id]: site:pulp-openapi-generator/docs/user/reference/settings/#parent_container_id
+[pulp-glue]: site:pulp-glue/docs/dev/
+[pulp_mcs_label]: site:pulp-openapi-generator/docs/user/reference/settings/#pulp_mcs_label.
