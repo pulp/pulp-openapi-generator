@@ -32,20 +32,27 @@ cd pulp-openapi-generator
 
 ## 2) Get the schema
 
-Here are some options to get a openapi schema:
+There are two basic options to get an openapi schema: (1) from an installed package and (2) from a running installation.
 
-1. From a python environment with Pulp packages installed:
+Note that the `api.spec` must be generated with the `--bindings` flag/url-option.
+That spec is tailored for bindings generation and isn't a fully compliant `api.spec`.
+
+1. From a python environment with Pulp packages installed.
+
+    The `--settings` is the user's Pulp settings (`settings.py`).
+    This is important because some settings affects client generation directly (e.g, `API_ROOT` and `DOMAIN_ENABLED`).
 
     ```bash
     pulpcore-manager openapi --bindings \
         --component "core" \
-        --file "core-api.json"
+        --file "core-api.json" \
+        --settings "${USER_SETTINGS}"
     ```
 
 1. From a running pulp instance:
 
     ```bash
-    PULP_URL="http://localhost:24817/pulp/api/v3/"
+    PULP_URL="http://pulp.example/pulp/api/v3/"
     COMPONENT="core"
     URL="${PULP_URL}docs/api.json?bindings&component=${COMPONENT}"
     curl "${URL}" -o "${COMPONENT}-api.json"
