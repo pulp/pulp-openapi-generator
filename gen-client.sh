@@ -2,10 +2,41 @@
 
 set -eu
 
+SCRIPT_NAME="$(basename "$0")"
+
 if [ $# -eq 0 ]
 then
-  echo "No arguments provided"
-  echo "Usage: $0 <api_spec> <component> [<language> [<package>]]"
+  cat << EOF
+No arguments provided.
+${SCRIPT_NAME} - Generate client libraries for pulp plugins.
+
+USAGE
+    ${SCRIPT_NAME} <api_spec> <component> [<language> [<package>]]
+
+ARGS
+    api_spec:  The openapi schema file in json format.
+    component: The pulp component target client. It should be a key in the
+               'info.x-pulp-app-versions' object from the <api_spec> file.
+    language:  The target language for the client generation. Default: python.
+    package:   The name of the generated package name in the target language.
+               Default: pulp_{component}
+
+DESCRIPTION
+    Generate a client for the given <language> and Pulp <component> using the
+    provided openapi <api_spec>.
+
+    The package will be created at './<package>-client/'.
+
+    Learn more:
+    <https://pulpproject.org/pulp-openapi-generator/docs/user/guides/generate-bindings/>
+
+EXAMPLES
+    Generate a pulp_rpm ruby client at 'pulp_rpm-client/' using 'rpm-api.json' spec:
+    $ ${SCRIPT_NAME} rpm-api.json rpm ruby
+
+    Generate a pulp_maven python client at 'my-maven-client/' using 'maven-api.json' spec:
+    $ ${SCRIPT_NAME} maven-api.json maven python my-maven
+EOF
   exit 1
 fi
 

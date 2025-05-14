@@ -2,6 +2,8 @@
 
 set -eu
 
+echo "DEPRECATED: use ./gen-client.sh instead."
+
 if [ $# -eq 0 ]
 then
   echo "No arguments provided"
@@ -39,7 +41,7 @@ fi
 
 echo ::group::BINDINGS
 
-./gen-client.sh api.json "${COMPONENT}" "${2:-python}" "${1}"
+./gen-client.sh "${USE_LOCAL_API_JSON:-api.json}" "${COMPONENT}" "${2:-python}" "${1}"
 
 echo ::endgroup::
 if [[ -z "${USE_LOCAL_API_JSON:-}" ]]
