@@ -16,7 +16,7 @@ To avoid getting too much into the generator internals, we try to use it only wh
 ## Custom Parameters
 
 The Pulp generator script passes specific parameters to [configure the OpenAPI Generator CLI].
-E.g, set namings, define appropriate version information and configure flags that makes the client more stable.
+E.g, set namings, define appropriate version information and configure flags that make the client more stable.
 
 ## Version Management
 
