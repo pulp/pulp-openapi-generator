@@ -6,10 +6,7 @@ echo "DEPRECATED: use ./gen-client.sh instead."
 
 if [ $# -eq 0 ]
 then
-  cat << EOF
-No arguments provided.
-$(basename "$0") - Generate client libraries for pulp plugins.
-EOF
+  echo "No arguments provided"
   exit 1
 fi
 
