@@ -60,7 +60,9 @@ language = sys.argv[1]
 core_version = Version(sys.stdin.read())
 
 if language.lower() == "python":
-    if core_version >= Version("3.70.dev"):
+    if core_version >= Version("3.85.dev"):
+        print("v7.14.0")
+    elif core_version >= Version("3.70.dev"):
         print("v7.10.0")
     else:
         print("v4.3.1")
@@ -131,10 +133,11 @@ else
 fi
 
 REMOVE_COOKIE_AUTH_FILTER='del(.paths[][].security|select(.)[]|select(.cookieAuth))|del(.components.securitySchemes.cookieAuth)'
+SPDX_LICENSE_FIX='.info.license.name|="GPL-2.0-or-later"'
 
 if [ "$LANGUAGE" = "python" ]
 then
-  cat "${API_SPEC}" | jq "." > patched-api.json
+  cat "${API_SPEC}" | jq "${SPDX_LICENSE_FIX}" > patched-api.json
 
   $CONTAINER_EXEC run \
     "${ULIMIT_COMMAND[@]}" \
