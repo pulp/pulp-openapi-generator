@@ -12,9 +12,6 @@ cd "$(dirname "$(realpath -e "$0")")"/../../..
 
 set -mveuo pipefail
 
-# Intall requirements for ansible playbooks
-pip install docker netaddr boto3 ansible
-
 for i in {1..3}
 do
   ansible-galaxy collection install "amazon.aws:8.1.0" && s=0 && break || s=$? && sleep 3
