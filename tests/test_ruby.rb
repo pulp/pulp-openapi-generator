@@ -1,5 +1,6 @@
 require 'pulpcore_client'
 require 'pulp_file_client'
+require 'pulp_rpm_client'
 require 'tempfile'
 require 'digest'
 
@@ -20,6 +21,13 @@ PulpFileClient.configure do |config|
   config.debugging=true
 end
 
+PulpRpmClient.configure do |config|
+  config.host= ENV['PULP_URL']
+  config.username= 'admin'
+  config.password= 'password'
+  config.debugging=true
+end
+
 
 @artifacts_api = PulpcoreClient::ArtifactsApi.new
 @filerepositories_api = PulpFileClient::RepositoriesFileApi.new
@@ -30,6 +38,9 @@ end
 @fileremotes_api = PulpFileClient::RemotesFileApi.new
 @tasks_api = PulpcoreClient::TasksApi.new
 @uploads_api = PulpcoreClient::UploadsApi.new
+@content_modulemds_api = PulpRpmClient::ContentModulemdsApi.new
+@rpmrepositories_api = PulpRpmClient::RepositoriesRpmApi.new
+@rpmremotes_api = PulpRpmClient::RemotesRpmApi.new
 
 def monitor_task(task_href)
     # Polls the Task API until the task is in a completed state.
@@ -147,3 +158,15 @@ publication_href = created_resources[0]
 
 distribution_data = PulpFileClient::FileFileDistribution.new({name: 'baz38', base_path: 'foo38', publication: publication_href})
 distribution = @filedistributions_api.create(distribution_data)
+
+# Exercise modular endpoint
+# https://github.com/pulp/pulp_rpm/issues/4125
+MODULAR_URL = 'https://fixtures.pulpproject.org/rpm-with-modules/'
+rpm_remote_data = PulpRpmClient::RpmRpmRemote.new({name: 'rpm_modules_remote', url: MODULAR_URL})
+rpm_remote = @rpmremotes_api.create(rpm_remote_data)
+rpm_repository_data = PulpRpmClient::RpmRpmRepository.new({name: 'rpm_modules_repo', remote: rpm_remote.pulp_href})
+rpm_repository = @rpmrepositories_api.create(rpm_repository_data)
+repository_sync_data = PulpRpmClient::RpmRepositorySyncURL.new({})
+sync_response = @rpmrepositories_api.sync(rpm_repository.pulp_href, repository_sync_data)
+created_resources = monitor_task(sync_response.task)
+@content_modulemds_api.list({})
