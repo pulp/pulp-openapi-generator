@@ -18,27 +18,13 @@ cd "$(dirname "$(realpath -e "$0")")"/../../..
 # this script.
 export DJANGO_SETTINGS_MODULE="pulpcore.app.settings"
 export PULP_SETTINGS="$PWD/.ci/ansible/settings/settings.py"
-export PULP_URL="http://pulp"
+export PULP_URL="http://pulp:80"
 
 ./generate.sh pulpcore python
 pip install ./pulpcore-client
 ./generate.sh pulp_file python
 pip install ./pulp_file-client
 
-python .github/workflows/scripts/test_bindings.py
+python tests/test_python.py
 
-rm -rf ./pulpcore-client
-./generate.sh pulpcore ruby
-pushd pulpcore-client
-  gem build pulpcore_client
-  gem install --both ./pulpcore_client-*.gem
-popd
-
-rm -rf ./pulp_file-client
-./generate.sh pulp_file ruby
-pushd pulp_file-client
-gem build pulp_file_client
-gem install --both ./pulp_file_client-*.gem
-popd
-
-ruby .github/workflows/scripts/test_bindings.rb
+./tests/ruby-runner.sh

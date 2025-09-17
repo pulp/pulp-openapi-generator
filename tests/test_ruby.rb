@@ -4,15 +4,17 @@ require 'tempfile'
 require 'digest'
 
 
+raise "PULP_URL environment variable is required" unless ENV['PULP_URL']
+
 PulpcoreClient.configure do |config|
-  config.host= "http://localhost:5001"
+  config.host= ENV['PULP_URL']
   config.username= 'admin'
   config.password= 'password'
   config.debugging=true
 end
 
 PulpFileClient.configure do |config|
-  config.host= "http://localhost:5001"
+  config.host= ENV['PULP_URL']
   config.username= 'admin'
   config.password= 'password'
   config.debugging=true
@@ -28,7 +30,6 @@ end
 @fileremotes_api = PulpFileClient::RemotesFileApi.new
 @tasks_api = PulpcoreClient::TasksApi.new
 @uploads_api = PulpcoreClient::UploadsApi.new
-
 
 def monitor_task(task_href)
     # Polls the Task API until the task is in a completed state.
