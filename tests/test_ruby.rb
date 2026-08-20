@@ -112,7 +112,7 @@ repository_data = PulpFileClient::FileFileRepository.new({name: 'foo38'})
 file_repository = @filerepositories_api.create(repository_data)
 
 # Sync a Repository
-repository_sync_data = PulpFileClient::RepositorySyncURL.new({remote: file_remote.pulp_href})
+repository_sync_data = PulpFileClient::FileRepositorySyncURL.new({remote: file_remote.pulp_href})
 sync_response = @filerepositories_api.sync(file_repository.pulp_href, repository_sync_data)
 
 # Monitor the sync task

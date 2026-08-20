@@ -15,7 +15,7 @@ from pulpcore.client.pulp_file import (
     PublicationsFileApi,
     RemotesFileApi,
     FileFileRemote,
-    RepositorySyncURL,
+    FileRepositorySyncURL,
     FileFilePublication,
     FileFileRepository,
     RepositoriesFileApi,
@@ -140,7 +140,7 @@ repository = filerepositories.create(repository_data)
 pprint(repository)
 
 # Sync a Repository
-repository_sync_data = RepositorySyncURL(remote=file_remote.pulp_href)
+repository_sync_data = FileRepositorySyncURL(remote=file_remote.pulp_href)
 sync_response = filerepositories.sync(repository.pulp_href, repository_sync_data)
 
 pprint(sync_response)

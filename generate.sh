@@ -7,6 +7,7 @@ echo "DEPRECATED: use ./gen-client.sh instead."
 if [ $# -eq 0 ]
 then
   echo "No arguments provided"
+  echo "Expected \$1=PROJECT (eg pulpcore, pulp_rpm, pulp_container) \$2=LANGUAGE (eg python, ruby) [\$3=API-VERSION] (v3, v4 (optional))"
   exit 1
 fi
 
@@ -21,9 +22,11 @@ fi
 # Skip downloading the api.json if `USE_LOCAL_API_JSON` is set.
 if [[ -z "${USE_LOCAL_API_JSON:-}" ]]
 then
+  API_VERSION="${3:-v3}"
   PULP_URL="${PULP_URL:-http://localhost:24817}"
   PULP_API_ROOT="${PULP_API_ROOT:-/pulp/}"
-  PULP_URL="${PULP_URL}${PULP_API_ROOT}api/v3/"
+  PULP_URL="${PULP_URL}${PULP_API_ROOT}api/${API_VERSION}/"
+  echo "retrieving api.json for version ${API_VERSION}"
 
   # Download the schema
   RETRY_COUNT=0
@@ -41,6 +44,7 @@ fi
 
 echo ::group::BINDINGS
 
+# COMPONENT is 'massaged' project-name, project-name is used as 'package' to gen-client
 ./gen-client.sh "${USE_LOCAL_API_JSON:-api.json}" "${COMPONENT}" "${2:-python}" "${1}"
 
 echo ::endgroup::
