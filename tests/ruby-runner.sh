@@ -10,7 +10,7 @@ GIT_PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 cd "$GIT_PROJECT_ROOT"
 
 export PULP_URL="${PULP_URL:-http://localhost:5001}"
-COMPONENTS=(pulpcore pulp_file)
+COMPONENTS=(pulpcore pulp_file pulp_rpm)
 
 function setup-ruby(){
   # Configure "isolated" ruby on host machine
