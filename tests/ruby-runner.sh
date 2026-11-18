@@ -3,7 +3,7 @@
 #
 # Requirements:
 # * A pulp instance running. Configure with PULP_URL. E.g, `export PULP_URL=http://localhost:5001`.
-# * Ruby version 2.7 installed. Recommended to use rbenv.
+# * Ruby version 3.3 installed. Recommended to use rbenv.
 
 set -mveuo pipefail
 GIT_PROJECT_ROOT="$(git rev-parse --show-toplevel)"
