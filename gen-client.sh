@@ -60,7 +60,9 @@ language = sys.argv[1]
 core_version = Version(sys.stdin.read())
 
 if language.lower() == "python":
-    if core_version >= Version("3.115.dev"):
+    if core_version >= Version("3.130.dev"):
+        print("v7.27.0")
+    elif core_version >= Version("3.115.dev"):
         print("v7.19.0")
     elif core_version >= Version("3.85.dev"):
         print("v7.14.0")
